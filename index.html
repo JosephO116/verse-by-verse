@@ -178,8 +178,6 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body{margin:0}
-.owner-panel input[type=password],.owner-panel input[type=text]{font:inherit;font-size:16px;font-weight:700;padding:8px 12px;border:3px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);min-width:0;flex:1}
-.linkish{background:none;border:0;color:var(--muted);font-weight:800;font-size:13px;text-decoration:underline;padding:4px}
 </style>
 </head>
 <body>
@@ -200,8 +198,6 @@ body{margin:0}
         <span class="tag" id="ref">Revelation 19:1–21</span>
         <span class="tag sun">NIV</span>
         <button class="tagbtn" id="btn-change">Change passage</button>
-        <button class="tagbtn" id="btn-share" hidden>Upload this chapter for everyone</button>
-        <span class="tag" id="share-msg" hidden></span>
       </div>
     </div>
   </header>
@@ -238,7 +234,6 @@ body{margin:0}
     <div class="panel" id="niv-panel" hidden>
       <div class="stage-title" id="niv-panel-title">Loading verses…</div>
       <p class="hint" id="niv-panel-hint">Fetching this chapter.</p>
-      <div class="row owner-only" hidden><button class="btn primary niv-pick">Choose NIV PDF</button><span class="hint niv-status"></span></div>
     </div>
 
     <main class="card" id="drill">
@@ -254,24 +249,7 @@ body{margin:0}
       </div>
       <div id="stage"></div>
     </main>
-    <p class="foot">Read → Fill gaps → First letters → Write out. A verse turns green once you write it out correctly. ★ means you've written it correctly 3 times.<br><button class="linkish" id="owner-toggle">Owner tools</button></p>
-    <div class="panel soft owner-panel" id="owner-panel" hidden>
-      <div class="stage-title">Owner tools</div>
-      <p class="hint">Enter your owner key to add verses for everyone. Only you need this.</p>
-      <div class="row"><input type="password" id="owner-key" placeholder="Owner key" autocomplete="off"><button class="btn primary" id="owner-save">Save key</button></div>
-      <div id="owner-tools" hidden style="display:grid;gap:12px">
-        <p class="hint">1. Load your NIV PDF on this device.</p>
-        <div class="row"><button class="btn primary niv-pick">Choose NIV PDF</button><span class="hint niv-status"></span></div>
-        <p class="hint">2. Upload verses to your Google Sheet so everyone gets them.</p>
-        <div class="row">
-          <button class="btn go" id="up-ch">This chapter</button>
-          <button class="btn go" id="up-book">This book</button>
-          <button class="btn quiet" id="up-all">Whole Bible</button>
-        </div>
-        <span class="hint" id="up-status"></span>
-        <button class="linkish" id="owner-forget" style="justify-self:start">Forget key on this device</button>
-      </div>
-    </div>
+    <p class="foot">Read → Fill gaps → First letters → Write out. A verse turns green once you write it out correctly. ★ means you've written it correctly 3 times.</p>
   </section>
 
   <!-- READ -->
@@ -296,7 +274,6 @@ body{margin:0}
     </div>
   </section>
 </div>
-<input type="file" id="niv-file" accept="application/pdf,.pdf" hidden>
 
 <script>
 const STRUCT = {"b":["Genesis","Exodus","Leviticus","Numbers","Deuteronomy","Joshua","Judges","Ruth","1 Samuel","2 Samuel","1 Kings","2 Kings","1 Chronicles","2 Chronicles","Ezra","Nehemiah","Esther","Job","Psalms","Proverbs","Ecclesiastes","Song of Solomon","Isaiah","Jeremiah","Lamentations","Ezekiel","Daniel","Hosea","Joel","Amos","Obadiah","Jonah","Micah","Nahum","Habakkuk","Zephaniah","Haggai","Zechariah","Malachi","Matthew","Mark","Luke","John","Acts","Romans","1 Corinthians","2 Corinthians","Galatians","Ephesians","Philippians","Colossians","1 Thessalonians","2 Thessalonians","1 Timothy","2 Timothy","Titus","Philemon","Hebrews","James","1 Peter","2 Peter","1 John","2 John","3 John","Jude","Revelation"],"c":[[31,25,24,26,32,22,24,22,29,32,32,20,18,24,21,16,27,33,38,18,34,24,20,67,34,35,46,22,35,43,55,32,20,31,29,43,36,30,23,23,57,38,34,34,28,34,31,22,33,26],[22,25,22,31,23,30,25,32,35,29,10,51,22,31,27,36,16,27,25,26,36,31,33,18,40,37,21,43,46,38,18,35,23,35,35,38,29,31,43,38],[17,16,17,35,19,30,38,36,24,20,47,8,59,57,33,34,16,30,37,27,24,33,44,23,55,46,34],[54,34,51,49,31,27,89,26,23,36,35,16,33,45,41,50,13,32,22,29,35,41,30,25,18,65,23,31,40,16,54,42,56,29,34,13],[46,37,29,49,33,25,26,20,29,22,32,32,18,29,23,22,20,22,21,20,23,30,25,22,19,19,26,68,29,20,30,52,29,12],[18,24,17,24,15,27,26,35,27,43,23,24,33,15,63,10,18,28,51,9,45,34,16,33],[36,23,31,24,31,40,25,35,57,18,40,15,25,20,20,31,13,31,30,48,25],[22,23,18,22],[28,36,21,22,12,21,17,22,27,27,15,25,23,52,35,23,58,30,24,42,15,23,29,22,44,25,12,25,11,31,13],[27,32,39,12,25,23,29,18,13,19,27,31,39,33,37,23,29,33,43,26,22,51,39,25],[53,46,28,34,18,38,51,66,28,29,43,33,34,31,34,34,24,46,21,43,29,53],[18,25,27,44,27,33,20,29,37,36,21,21,25,29,38,20,41,37,37,21,26,20,37,20,30],[54,55,24,43,26,81,40,40,44,14,47,40,14,17,29,43,27,17,19,8,30,19,32,31,31,32,34,21,30],[17,18,17,22,14,42,22,18,31,19,23,16,22,15,19,14,19,34,11,37,20,12,21,27,28,23,9,27,36,27,21,33,25,33,27,23],[11,70,13,24,17,22,28,36,15,44],[11,20,32,23,19,19,73,18,38,39,36,47,31],[22,23,15,17,14,14,10,17,32,3],[22,13,26,21,27,30,21,22,35,22,20,25,28,22,35,22,16,21,29,29,34,30,17,25,6,14,23,28,25,31,40,22,33,37,16,33,24,41,30,24,34,17],[6,12,8,8,12,10,17,9,20,18,7,8,6,7,5,11,15,50,14,9,13,31,6,10,22,12,14,9,11,12,24,11,22,22,28,12,40,22,13,17,13,11,5,26,17,11,9,14,20,23,19,9,6,7,23,13,11,11,17,12,8,12,11,10,13,20,7,35,36,5,24,20,28,23,10,12,20,72,13,19,16,8,18,12,13,17,7,18,52,17,16,15,5,23,11,13,12,9,9,5,8,28,22,35,45,48,43,13,31,7,10,10,9,8,18,19,2,29,176,7,8,9,4,8,5,6,5,6,8,8,3,18,3,3,21,26,9,8,24,13,10,7,12,15,21,10,20,14,9,6],[33,22,35,27,23,35,27,36,18,32,31,28,25,35,33,33,28,24,29,30,31,29,35,34,28,28,27,28,27,33,31],[18,26,22,16,20,12,29,17,18,20,10,14],[17,17,11,16,16,13,13,14],[31,22,26,6,30,13,25,22,21,34,16,6,22,32,9,14,14,7,25,6,17,25,18,23,12,21,13,29,24,33,9,20,24,17,10,22,38,22,8,31,29,25,28,28,25,13,15,22,26,11,23,15,12,17,13,12,21,14,21,22,11,12,19,12,25,24],[19,37,25,31,31,30,34,22,26,25,23,17,27,22,21,21,27,23,15,18,14,30,40,10,38,24,22,17,32,24,40,44,26,22,19,32,21,28,18,16,18,22,13,30,5,28,7,47,39,46,64,34],[22,22,66,22,22],[28,10,27,17,17,14,27,18,11,22,25,28,23,23,8,63,24,32,14,49,32,31,49,27,17,21,36,26,21,26,18,32,33,31,15,38,28,23,29,49,26,20,27,31,25,24,23,35],[21,49,30,37,31,28,28,27,27,21,45,13],[11,23,5,19,15,11,16,14,17,15,12,14,16,9],[20,32,21],[15,16,15,13,27,14,17,14,15],[21],[17,10,10,11],[16,13,12,13,15,16,20],[15,13,19],[17,20,19],[18,15,20],[15,23],[21,13,10,14,11,15,14,23,17,12,17,14,9,21],[14,17,18,6],[25,23,17,25,48,34,29,34,38,42,30,50,58,36,39,28,27,35,30,34,46,46,39,51,46,75,66,20],[45,28,35,41,43,56,37,38,50,52,33,44,37,72,47,20],[80,52,38,44,39,49,50,56,62,42,54,59,35,35,32,31,37,43,48,47,38,71,56,53],[51,25,36,54,47,71,53,59,41,42,57,50,38,31,27,33,26,40,42,31,25],[26,47,26,37,42,15,60,40,43,48,30,25,52,28,41,40,34,28,41,38,40,30,35,27,27,32,44,31],[32,29,31,25,21,23,25,39,33,21,36,21,14,23,33,27],[31,16,23,21,13,20,40,13,27,33,34,31,13,40,58,24],[24,17,18,18,21,18,16,24,15,18,33,21,14],[24,21,29,31,26,18],[23,22,21,32,33,24],[30,30,21,23],[29,23,25,18],[10,20,13,18,28],[12,17,18],[20,15,16,16,25,21],[18,26,17,22],[16,15,15],[25],[14,18,19,16,14,20,28,13,28,39,40,29,25],[27,26,18,17,20],[25,25,22,19,14],[21,22,18],[10,29,24,21,21],[13],[14],[25],[20,29,22,11,14,17,17,13,21,11,19,17,18,20,8,21,18,24,21,15,27,21]]};
@@ -314,7 +291,6 @@ const words = t => t.trim().split(/\s+/).filter(Boolean);
 const BIBLE = { b: STRUCT.b, t: STRUCT.c.map(chs => chs.map(n => ({ length: n }))) };
 function loadBible(){ return Promise.resolve(BIBLE); }
 function chapterNIV(book, ch){
-  if (NIVB){ const bi = NIVB.b.indexOf(book); if (bi >= 0 && NIVB.t[bi] && NIVB.t[bi][ch-1]) return NIVB.t[bi][ch-1]; }
   return SHARED[`${book}:${ch}`] || store.get(cacheKey(book, ch), null);
 }
 
@@ -322,7 +298,6 @@ function chapterNIV(book, ch){
 const SCRIPT_URL = (window.VBV_CONFIG && window.VBV_CONFIG.scriptUrl || '').trim();
 const HAS_SCRIPT = /^https:\/\/script\.google(usercontent)?\.com\//.test(SCRIPT_URL);
 const SHARED = {}; const sharedTried = new Set(); const sharedChecked = new Set(); const sharedFailed = new Set();
-let OWNER_KEY = store.get('vbv:ownerKey', '');
 const cacheKey = (book, ch) => `vbv:ch:${book}:${ch}`;
 async function fetchShared(book, ch, force){
   const k = `${book}:${ch}`;
@@ -337,116 +312,6 @@ async function fetchShared(book, ch, force){
   if (S.book === book && S.ch === ch) render();
   if (!$('#view-read').hidden && R.book === book && R.ch === ch) renderReader();
 }
-function localChapter(book, ch){ if (!NIVB) return null; const bi = NIVB.b.indexOf(book); return bi >= 0 && NIVB.t[bi] && NIVB.t[bi][ch-1] || null; }
-function renderOwner(){
-  const k = `${S.book}:${S.ch}`, isOwner = !!OWNER_KEY;
-  document.querySelectorAll('.owner-only').forEach(e => e.hidden = !isOwner);
-  $('#btn-share').hidden = !(isOwner && HAS_SCRIPT && localChapter(S.book, S.ch) && sharedChecked.has(k) && !SHARED[k]);
-  $('#owner-tools').hidden = !isOwner; $('#owner-key').value = OWNER_KEY ? '••••••••' : '';
-}
-async function uploadChapters(chapters){
-  const r = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ key: OWNER_KEY, chapters }) });
-  const d = await r.json(); if (!d.ok) throw new Error(d.error || 'upload');
-  chapters.forEach(c => { const k = `${c.book}:${c.ch}`; SHARED[k] = c.verses; store.set(cacheKey(c.book, c.ch), c.verses); sharedChecked.add(k); });
-  return d;
-}
-function chapterPayload(book, ch){ const arr = localChapter(book, ch); if (!arr) return null; const verses = {}; arr.forEach((t, i) => { if (t) verses[i+1] = t; }); return { book, ch, verses }; }
-async function uploadBooks(books, label){
-  const st = $('#up-status');
-  if (!HAS_SCRIPT){ st.textContent = 'Add your Apps Script link to config.js first.'; return; }
-  if (!NIVB){ st.textContent = 'Load your NIV PDF first (step 1).'; return; }
-  document.querySelectorAll('#owner-tools .btn').forEach(b => b.disabled = true);
-  let done = 0;
-  try {
-    for (const [i, book] of books.entries()){
-      const bi = NIVB.b.indexOf(book); const chs = (NIVB.t[bi] || []).map((_, j) => chapterPayload(book, j + 1)).filter(Boolean);
-      if (books.length > 1) st.textContent = `Uploading ${book} (${i + 1} of ${books.length})…`;
-      for (let j = 0; j < chs.length; j += 40){ await uploadChapters(chs.slice(j, j + 40)); done += Math.min(40, chs.length - j); }
-    }
-    st.textContent = `Uploaded ${label}: ${done} chapter${done === 1 ? '' : 's'} ✓`; render();
-  } catch(e){ st.textContent = e.message === 'wrong key' ? 'That owner key is wrong. Check it in Apps Script → Project Settings → Script properties.' : `Upload stopped after ${done} chapters. Check your connection and try again.`; }
-  document.querySelectorAll('#owner-tools .btn').forEach(b => b.disabled = false);
-}
-$('#owner-toggle').onclick = () => { const p = $('#owner-panel'); p.hidden = !p.hidden; if (!p.hidden){ renderOwner(); p.scrollIntoView({ behavior: 'smooth', block: 'start' }); } };
-$('#owner-save').onclick = () => { const v = $('#owner-key').value.trim(); if (!v || /^•+$/.test(v)) return; OWNER_KEY = v; store.set('vbv:ownerKey', v); renderOwner(); render(); };
-$('#owner-forget').onclick = () => { OWNER_KEY = ''; store.set('vbv:ownerKey', ''); $('#owner-key').value = ''; renderOwner(); render(); };
-$('#up-ch').onclick = async () => { const c = chapterPayload(S.book, S.ch); if (!c){ $('#up-status').textContent = `${S.book} ${S.ch} isn't in the loaded PDF.`; return; } $('#up-status').textContent = 'Uploading…'; try { await uploadChapters([c]); $('#up-status').textContent = `Uploaded ${S.book} ${S.ch} ✓`; render(); } catch(e){ $('#up-status').textContent = e.message === 'wrong key' ? 'That owner key is wrong.' : 'Upload failed. Try again.'; } };
-$('#up-book').onclick = () => uploadBooks([S.book], S.book);
-let allArmed = false;
-$('#up-all').onclick = () => { if (!allArmed){ allArmed = true; $('#up-all').textContent = 'Tap again to upload all 66 books'; setTimeout(() => { allArmed = false; $('#up-all').textContent = 'Whole Bible'; }, 4000); return; } allArmed = false; $('#up-all').textContent = 'Whole Bible'; uploadBooks(NIVB.b.filter(b => (NIVB.t[NIVB.b.indexOf(b)] || []).length), 'the whole Bible'); };
-
-/* ---------- NIV from the user's own PDF (kept in IndexedDB on this device) ---------- */
-let NIVB = null;
-const idb = {
-  db(){ return new Promise((res, rej) => { try { const r = indexedDB.open('vbv', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); } catch(e){ rej(e); } }); },
-  async get(k){ const d = await this.db(); return new Promise((res, rej) => { const q = d.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); },
-  async put(k, v){ const d = await this.db(); return new Promise((res, rej) => { const t = d.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = res; t.onerror = () => rej(t.error); }); }
-};
-// Shared parser: feed items {str,size,eol} page by page; produces {books:[{name,chapters:[[verses]]}]}
-function makeNivParser(bookNames){
-  const canon = s => s.toLowerCase().replace(/^(\d)(st|nd|rd|th)\b/,'$1').replace(/[^a-z0-9]/g,'').replace(/^psalm$/,'psalms').replace(/^songofsongs$/,'songofsolomon');
-  const map = {}; bookNames.forEach(b => map[canon(b)] = b);
-  const books = []; let book=null, ch=null, v=null, buf='', pendingTitle='', lastEol=true;
-  const flush = () => { if(ch && v!=null){ const t=buf.replace(/\s+/g,' ').replace(/\s+([.,;:!?’”)])/g,'$1').trim(); if(t) ch[v-1]=t; } buf=''; };
-  function item(str,size,eol){
-    const s=str;
-    if(size>=11.5 && size<18 && book && book.name==='Psalms'){
-      const m=s.trim().match(/^psalm\s+(\d+)$/i); if(m){ flush(); ch=[]; book.chapters[+m[1]-1]=ch; v=1; }
-      lastEol=eol; return;
-    }
-    if(size>=18){
-      if(/^\d+$/.test(s.trim())){ flush(); if(book){ ch=[]; book.chapters[+s.trim()-1]=ch; v=1; } lastEol=eol; return; }
-      if(s.trim()){ pendingTitle += (pendingTitle?' ':'')+s.trim(); const name=map[canon(pendingTitle)]; if(name){ flush(); book={name,chapters:[]}; books.push(book); ch=[]; book.chapters[0]=ch; v=1; pendingTitle=''; } }
-      lastEol=eol; return;
-    }
-    pendingTitle='';
-    if(size<=7.5 && /^\d+$/.test(s.trim())){ flush(); v=+s.trim(); lastEol=eol; return; }
-    if(!s){ if(eol) buf+=' '; return; }
-    buf += s; if(eol) buf+=' ';
-    lastEol=eol;
-  }
-  return { item, done(){ flush(); return books; } };
-}
-
-
-function loadScript(src){ return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => rej(new Error('script')); document.head.appendChild(s); }); }
-let pdfjsReady = null;
-function loadPdfJs(){
-  const base = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
-  if (!pdfjsReady) pdfjsReady = loadScript(base + 'pdf.worker.min.js').then(() => loadScript(base + 'pdf.min.js')).then(() => { window.pdfjsLib.GlobalWorkerOptions.workerSrc = base + 'pdf.worker.min.js'; return window.pdfjsLib; });
-  return pdfjsReady;
-}
-function nivStatus(msg){ document.querySelectorAll('.niv-status').forEach(e => e.textContent = msg); }
-async function importNivPdf(file){
-  document.querySelectorAll('.niv-pick').forEach(b => b.disabled = true);
-  try {
-    nivStatus('Loading PDF reader…');
-    await loadBible();
-    const lib = await loadPdfJs();
-    const doc = await lib.getDocument({ data: new Uint8Array(await file.arrayBuffer()), disableFontFace: true, isEvalSupported: false }).promise;
-    const P = makeNivParser(BIBLE.b);
-    for (let p = 1; p <= doc.numPages; p++){
-      const pg = await doc.getPage(p); const tc = await pg.getTextContent();
-      for (const it of tc.items){ if (it.str === undefined) continue; P.item(it.str, Math.hypot(it.transform[2], it.transform[3]), it.hasEOL); }
-      pg.cleanup();
-      if (p % 15 === 0 || p === doc.numPages){ nivStatus(`Reading page ${p} of ${doc.numPages}…`); await new Promise(r => setTimeout(r, 0)); }
-    }
-    const books = P.done();
-    if (books.length < 3) throw new Error('layout');
-    const data = { b: BIBLE.b.slice(), t: BIBLE.b.map(name => { const bk = books.find(x => x.name === name); return bk ? bk.chapters : []; }) };
-    NIVB = data;
-    try { await idb.put('niv', data); } catch(e){}
-    const chs = data.t.reduce((a, b) => a + b.filter(Boolean).length, 0);
-    nivStatus(`NIV loaded: ${books.length} books, ${chs} chapters.`);
-    render(); if (!$('#view-read').hidden) renderReader();
-  } catch(e){
-    nivStatus(e.message === 'layout' ? "That PDF's layout wasn't recognised. Try pasting a chapter instead." : "Couldn't read that file. Check it's the NIV PDF and try again.");
-  } finally { document.querySelectorAll('.niv-pick').forEach(b => b.disabled = false); }
-}
-document.addEventListener('click', e => { if (e.target.closest('.niv-pick')) $('#niv-file').click(); });
-$('#niv-file').addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; if (f) importNivPdf(f); });
-
-
 /* ---------- State ---------- */
 let S = store.get('vbv:state', null) || { book:'Revelation', ch:19, from:1, to:21, tr:'NIV', idx:0, step:0 };
 S.tr = 'NIV';
@@ -517,48 +382,6 @@ $('#chips').addEventListener('click', e => {
   S.idx = +b.dataset.i; S.step = 0; saveState(); render();
 });
 
-/* ---------- NIV paste ---------- */
-function cleanPasted(text){
-  const lines = text.replace(/\r/g,'').replace(/\[[a-z]{1,2}\]/g,'').split('\n');
-  const seen = {}; lines.forEach(l => { const t = l.trim(); if (t) seen[t] = (seen[t] || 0) + 1; });
-  for (let i = 0; i < lines.length; i++){ const t = lines[i].trim(); if ((seen[t] > 1 && !/^\d+$/.test(t) && t.length > 8) || /^(scope|date)\s*:/i.test(t)) lines[i] = ''; }
-  const isHeading = (l, next) => {
-    const t = l.trim(); if (!t || /^\d/.test(t) || /[.,;:!?"”’)\]]$/.test(t)) return false;
-    const w = t.split(/\s+/); if (w.length < 2 || w.length > 9) return false;
-    const caps = w.filter(x => /^[A-Z]/.test(x)).length;
-    return caps >= Math.ceil(w.length / 2) && /^\s*\d/.test(next || '');
-  };
-  return lines.filter((l, i) => { const next = lines.slice(i + 1).find(x => x.trim()); return !isHeading(l, next); }).join('\n');
-}
-function parseNumbered(text, ch, from){
-  const parts = cleanPasted(text).split(/(\d+)/);
-  const out = {}; let cur = null, expected = from, buf = '';
-  const flush = () => { if (cur != null){ const t = buf.replace(/\s+/g,' ').trim(); if (t) out[cur] = t; } buf = ''; };
-  for (let i = 0; i < parts.length; i++){
-    const p = parts[i];
-    if (i % 2 === 1){
-      const n = +p;
-      const prevCh = parts[i-1].slice(-1), nextCh = (parts[i+1] || ' ')[0];
-      const isolated = !/[\d,]/.test(prevCh || ' ') && !/[\d,]/.test(nextCh);
-      if (isolated && n === expected){ flush(); cur = n; expected = n + 1; continue; }
-      if (isolated && n === 1 && cur === 1 && expected === 2){ buf = ''; continue; }
-      if (isolated && n === 1 && cur != null && cur > 1 && !out[1]){ buf = ''; Object.keys(out).forEach(k => delete out[k]); cur = 1; expected = 2; continue; }
-      if (isolated && cur == null && n === ch && expected === 1){ flush(); cur = 1; expected = 2; continue; }
-      if (isolated && cur === 1 && expected === 2 && n === ch && words(buf).length <= 5 && !/[.;:!?]/.test(buf)){ buf = ''; continue; }
-      buf += p;
-    } else buf += p;
-  }
-  flush();
-  return out;
-}
-
-$('#btn-share').onclick = async () => {
-  const btn = $('#btn-share'), msg = $('#share-msg'); btn.disabled = true; btn.textContent = 'Uploading…';
-  try { await uploadChapters([chapterPayload(S.book, S.ch)]); msg.textContent = `${S.book} ${S.ch} is live for everyone ✓`; msg.hidden = false; renderOwner(); }
-  catch(e){ msg.textContent = e.message === 'wrong key' ? 'Owner key is wrong.' : "Couldn't upload. Try again."; msg.hidden = false; }
-  btn.disabled = false; btn.textContent = 'Upload this chapter for everyone';
-};
-
 /* ---------- Picker ---------- */
 function fillSelect(sel, items, val){ sel.innerHTML = items.map(x => `<option value="${esc(String(x))}">${esc(String(x))}</option>`).join(''); if (val != null) sel.value = val; }
 function syncPicker(changed){
@@ -595,7 +418,6 @@ let VS = [];
 function render(){
   renderRef();
   const vs = passageVerses();
-  renderOwner();
   if (S.tr === 'NIV') fetchShared(S.book, S.ch);
   $('#picker').hidden = !choosing;
   if (choosing){ $('#niv-panel').hidden = true; $('#drill').hidden = true; $('#chips').innerHTML = ''; $('#stats').hidden = true; return; }
@@ -603,12 +425,10 @@ function render(){
   const needNiv = !vs;
   if (needNiv){
     const k = `${S.book}:${S.ch}`;
-    const t = !HAS_SCRIPT && !OWNER_KEY ? ['Almost ready', "This app hasn't been connected to its verses yet."]
-      : !HAS_SCRIPT ? ['Connect your Sheet', 'Add your Apps Script link to config.js, then reload.']
+    const t = !HAS_SCRIPT ? ['Almost ready', "This app hasn't been connected to its verses yet."]
       : !sharedChecked.has(k) ? ['Loading verses…', `Fetching ${S.book} ${S.ch}.`]
       : sharedFailed.has(k) ? ["Can't reach the verses", "Check your internet connection, then reopen the app. Chapters you've opened before work offline."]
-      : OWNER_KEY ? ['Add this chapter', `${S.book} ${S.ch} isn't in your Sheet yet. Load your NIV PDF, then use Owner tools at the bottom to upload it.`]
-      : ['Not added yet', `${S.book} ${S.ch} hasn't been added to the app yet. Pick another passage, or ask the person who shared this app.`];
+      : ['Not added yet', `${S.book} ${S.ch} isn't in the verse Sheet yet. Pick another passage.`];
     $('#niv-panel-title').textContent = t[0]; $('#niv-panel-hint').textContent = t[1];
   }
   $('#niv-panel').hidden = !needNiv; $('#drill').hidden = needNiv || !vs;
@@ -885,10 +705,8 @@ function switchTab(t){
 $('#tab-mem').onclick = () => switchTab('mem'); $('#tab-read').onclick = () => switchTab('read');
 
 openPicker();
-renderOwner();
 if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 if (location.hash === '#read') switchTab('read');
-idb.get('niv').then(d => { if (d && d.b){ NIVB = d; if (S.tr === 'NIV') render(); if (!$('#view-read').hidden) renderReader(); } }).catch(() => {});
 </script>
 </body>
 </html>
