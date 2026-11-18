@@ -178,6 +178,31 @@ canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-in
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body{margin:0}
+/* chapter-first flow */
+.home{display:grid;gap:18px;justify-items:center;text-align:center}
+.home h2{font-family:var(--font-display);font-weight:800;font-size:26px;margin:0}
+.resume{display:flex;align-items:center;gap:12px;text-align:left;width:100%;max-width:440px;background:var(--paper);border:3px solid var(--ink);border-radius:18px;box-shadow:0 4px 0 var(--ink);padding:10px 14px}
+.resume:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.resume .ref{font-family:var(--font-display);font-weight:800;font-size:18px;background:var(--pink);color:#fff;border-radius:10px;padding:4px 9px 0;white-space:nowrap}
+.resume .txt{display:flex;flex-direction:column;flex:1;min-width:0}
+.resume .txt b{font-weight:800;font-size:15px}.resume .txt small{font-size:13px;color:var(--muted);font-weight:700}
+.resume .go{font-size:22px;font-weight:800}
+.chapgroup{display:grid;gap:10px;justify-items:center;width:100%}
+.chapgroup h3{font-family:var(--font-display);font-weight:800;font-size:18px;margin:0;color:var(--muted)}
+.chaps{display:flex;flex-wrap:wrap;justify-content:center;gap:14px 12px;max-width:440px;padding-bottom:4px}
+.chap{width:56px;height:56px;border-radius:999px;border:3px solid var(--ink);background:var(--paper);box-shadow:0 4px 0 var(--ink);font-family:var(--font-display);font-weight:800;font-size:19px;display:grid;place-items:center;padding:0;transition:transform .08s}
+.chap:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.chap.started{background:var(--green-soft);color:var(--green);border-color:var(--green);box-shadow:0 4px 0 var(--green)}
+.topbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.back{background:var(--paper);border:2px solid var(--line);border-radius:999px;padding:6px 14px;font-weight:800;font-size:14px;white-space:nowrap}
+.topbar h2{font-family:var(--font-display);font-weight:800;font-size:28px;line-height:1;margin:0;color:var(--pink);flex:1;min-width:0}
+.topbar .count{margin-left:auto;font-size:13px;font-weight:800;color:var(--muted)}
+.tipbubble{display:flex;align-items:center;gap:10px;background:var(--sun-soft);border:2px solid var(--sun);border-radius:16px 16px 16px 4px;padding:8px 12px;font-weight:800;font-size:14px}
+.tipbubble img{width:36px;height:auto;flex:none}
+.vrow{text-align:left;border:0;background:transparent;color:inherit;width:100%;font:inherit;font-size:18px}
+.vrow:nth-child(odd){background:var(--paper)}
+.vrow .tick{color:var(--green);font-weight:800;padding-top:3px}
+.vtab .vrow{grid-template-columns:2.4em minmax(0,1fr) 1.2em}
 </style>
 </head>
 <body>
@@ -194,41 +219,20 @@ body{margin:0}
     <div class="titles">
       <div class="eyebrow">Bible Memorisation</div>
       <h1>Verse <span>by Verse</span></h1>
-      <div class="meta">
-        <span class="tag" id="ref">Revelation 19:1–21</span>
-        <span class="tag sun">NIV</span>
-        <button class="tagbtn" id="btn-change">Change passage</button>
-      </div>
     </div>
   </header>
 
-  <div class="bar">
-    <div class="tabs" role="tablist">
-      <button role="tab" id="tab-mem" aria-selected="true">Memorise</button>
-      <button role="tab" id="tab-read" aria-selected="false">Read the Bible</button>
-    </div>
-    <div class="stats" id="stats">
-      <div class="stat done"><b id="st-done">0</b><small>Done</small></div>
-      <div class="stat reps"><b id="st-reps">0</b><small>Written</small></div>
-      <div class="stat stars"><b id="st-stars">0</b><small>Stars</small></div>
-    </div>
-  </div>
+  <!-- HOME: pick a chapter -->
+  <section id="view-home" class="home">
+    <button class="resume" id="resume" hidden><span class="ref" id="resume-ref">19:5</span><span class="txt"><b>Carry on where you left off</b><small id="resume-sub"></small></span><span class="go" aria-hidden="true">›</span></button>
+    <h2>Pick a chapter</h2>
+    <div id="chapter-list" style="display:grid;gap:22px;width:100%"><p class="hint">Loading chapters…</p></div>
+    <p class="hint">Green chapters are ones you've started.</p>
+  </section>
 
   <!-- MEMORISE -->
-  <section id="view-mem" class="wrap">
-    <div class="panel soft" id="picker" hidden>
-      <div class="stage-title">Which passage are you memorising?</div>
-      <div class="grid4">
-        <label class="f book">Book<select id="p-book"></select></label>
-        <label class="f">Chapter<select id="p-ch"></select></label>
-        <label class="f">From<select id="p-from"></select></label>
-        <label class="f">To<select id="p-to"></select></label>
-      </div>
-      <div class="row end">
-        <button class="btn quiet" id="p-cancel">Cancel</button>
-        <button class="btn primary" id="p-go">Start</button>
-      </div>
-    </div>
+  <section id="view-mem" class="wrap" hidden>
+    <div class="topbar"><button class="back" id="m-back">‹ Revelation 19</button><span class="count" id="m-count"></span></div>
     <nav class="trail" id="chips" aria-label="Verses"></nav>
 
     <div class="panel" id="niv-panel" hidden>
@@ -254,24 +258,9 @@ body{margin:0}
 
   <!-- READ -->
   <section id="view-read" class="wrap" hidden>
-    <div class="panel soft">
-      <div class="row">
-        <select id="r-book" style="flex:2 1 140px;min-width:0" aria-label="Book"></select>
-        <select id="r-ch" style="flex:1 1 70px;min-width:0" aria-label="Chapter"></select>
-      </div>
-      <div class="row">
-        <button class="btn quiet" id="r-prev">‹ Previous</button>
-        <span class="spacer"></span>
-        <button class="btn quiet" id="r-next">Next ›</button>
-      </div>
-    </div>
-    <div class="panel">
-      <div class="chapter" id="r-text"><p class="hint">Loading…</p></div>
-      <div class="row">
-        <p class="note" style="flex:1;min-width:200px" id="r-note">Tap any verse to start memorising from there.</p>
-        <button class="btn go" id="r-mem">Memorise this chapter</button>
-      </div>
-    </div>
+    <div class="topbar"><button class="back" id="r-back">‹ Chapters</button><h2 id="r-title">Revelation 19</h2><span class="tag sun">NIV</span></div>
+    <div class="tipbubble"><img id="r-coach" alt="" aria-hidden="true">Tap a verse to start memorising it!</div>
+    <div class="panel"><div class="chapter" id="r-text"><p class="hint">Loading…</p></div></div>
   </section>
 </div>
 
@@ -330,8 +319,7 @@ function passageVerses(){
 
 /* ---------- Header / passage ---------- */
 function renderRef(){
-  const range = S.from === S.to ? `${S.from}` : `${S.from}–${S.to}`;
-  $('#ref').textContent = `${S.book} ${S.ch}:${range}`;
+  $('#m-back').textContent = `‹ ${S.book} ${S.ch}`;
 }
 function renderChips(vs){
   $('#chips').innerHTML = vs.map((v, i) => {
@@ -340,11 +328,7 @@ function renderChips(vs){
   }).join('');
   renderStats(vs);
 }
-function renderStats(vs){
-  vs = vs || VS; let done = 0, reps = 0, stars = 0;
-  vs.forEach(v => { const p = PROG[v.n] || {}; if (p.done) done++; reps += p.reps || 0; if ((p.reps || 0) >= 3) stars++; });
-  $('#st-done').textContent = `${done}/${vs.length}`; $('#st-reps').textContent = reps; $('#st-stars').textContent = stars;
-}
+function renderStats(){}
 
 /* ---------- Coach + confetti ---------- */
 const MASCOTS = [...document.querySelectorAll('#squad img')];
@@ -384,32 +368,7 @@ $('#chips').addEventListener('click', e => {
 
 /* ---------- Picker ---------- */
 function fillSelect(sel, items, val){ sel.innerHTML = items.map(x => `<option value="${esc(String(x))}">${esc(String(x))}</option>`).join(''); if (val != null) sel.value = val; }
-function syncPicker(changed){
-  const book = $('#p-book').value, chs = BIBLE.t[BIBLE.b.indexOf(book)];
-  if (changed === 'book' || !$('#p-ch').options.length) fillSelect($('#p-ch'), chs.map((_, i) => i + 1), changed === 'book' ? 1 : S.ch);
-  const vc = chs[+$('#p-ch').value - 1].length, nums = Array.from({ length: vc }, (_, i) => i + 1);
-  if (changed !== 'from' && changed !== 'to'){ fillSelect($('#p-from'), nums, changed ? 1 : S.from); fillSelect($('#p-to'), nums, changed ? vc : S.to); }
-  if (+$('#p-to').value < +$('#p-from').value) $('#p-to').value = $('#p-from').value;
-}
-let choosing = true, started = false;
-function openPicker(){
-  fillSelect($('#p-book'), BIBLE.b, S.book); $('#p-ch').innerHTML = ''; syncPicker(null);
-  $('#p-cancel').hidden = !started; choosing = true; render();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-$('#btn-change').onclick = () => { if (choosing && started){ choosing = false; render(); } else openPicker(); };
-$('#p-book').onchange = () => syncPicker('book');
-$('#p-ch').onchange = () => syncPicker('ch');
-$('#p-from').onchange = () => syncPicker('from');
-$('#p-to').onchange = () => syncPicker('to');
-$('#p-cancel').onclick = () => { choosing = false; render(); };
-$('#p-go').onclick = () => {
-  const same = $('#p-book').value === S.book && +$('#p-ch').value === S.ch && +$('#p-from').value === S.from && +$('#p-to').value === S.to;
-  choosing = false; started = true;
-  if (same) render(); else setPassage($('#p-book').value, +$('#p-ch').value, +$('#p-from').value, +$('#p-to').value, 0);
-};
 function setPassage(book, ch, from, to, idx){
-  choosing = false; started = true;
   Object.assign(S, { book, ch, from, to, idx, step: 0 }); saveState(); PROG = store.get(progKey(), {}); render();
 }
 
@@ -419,16 +378,13 @@ function render(){
   renderRef();
   const vs = passageVerses();
   if (S.tr === 'NIV') fetchShared(S.book, S.ch);
-  $('#picker').hidden = !choosing;
-  if (choosing){ $('#niv-panel').hidden = true; $('#drill').hidden = true; $('#chips').innerHTML = ''; $('#stats').hidden = true; return; }
-  $('#stats').hidden = false;
   const needNiv = !vs;
   if (needNiv){
     const k = `${S.book}:${S.ch}`;
     const t = !HAS_SCRIPT ? ['Almost ready', "This app hasn't been connected to its verses yet."]
       : !sharedChecked.has(k) ? ['Loading verses…', `Fetching ${S.book} ${S.ch}.`]
       : sharedFailed.has(k) ? ["Can't reach the verses", "Check your internet connection, then reopen the app. Chapters you've opened before work offline."]
-      : ['Not added yet', `${S.book} ${S.ch} isn't in the verse Sheet yet. Pick another passage.`];
+      : ['Not added yet', `${S.book} ${S.ch} isn't in the verse Sheet yet. Go back and pick another chapter.`];
     $('#niv-panel-title').textContent = t[0]; $('#niv-panel-hint').textContent = t[1];
   }
   $('#niv-panel').hidden = !needNiv; $('#drill').hidden = needNiv || !vs;
@@ -443,7 +399,8 @@ function renderStage(){
   document.querySelectorAll('.step').forEach(b => { const s = +b.dataset.s; b.classList.toggle('active', s === S.step); b.classList.toggle('passed', s < S.step); });
   const v = VS[S.idx];
   $('#c-ref').textContent = `${S.ch}:${v.n}`;
-  $('#c-sub').textContent = `${STEP_NAMES[S.step]} · verse ${S.idx + 1} of ${VS.length}`;
+  $('#c-sub').textContent = STEP_NAMES[S.step];
+  $('#m-count').textContent = `Verse ${v.n} of ${VS.length}`;
   const ci = S.idx % MASCOTS.length; if (MASCOTS[ci]) $('#coach-img').src = MASCOTS[ci].src;
   say(pick(START[S.step]));
   [stageRead, stageGaps, stageLetters, stageWrite][S.step](v, $('#stage'));
@@ -662,51 +619,75 @@ function stageWrite(v, el){
   setTimeout(() => $('#w-in') && $('#w-in').focus({ preventScroll: true }), 50);
 }
 
-/* ---------- Reader ---------- */
+/* ---------- Screens: chapters → read → memorise ---------- */
+let VIEW = 'home';
+function go(view){
+  VIEW = view;
+  $('#view-home').hidden = view !== 'home'; $('#view-read').hidden = view !== 'read'; $('#view-mem').hidden = view !== 'mem';
+  document.querySelector('.hero').hidden = view !== 'home';
+  if (view === 'home') renderHome();
+  if (view === 'read') renderReader();
+  if (view === 'mem') render();
+  window.scrollTo({ top: 0 });
+}
+const doneIn = (book, ch) => store.get(`vbv:prog:NIV:${book}:${ch}`, {});
+let CHAPTERS = store.get('vbv:list', null);
+async function loadChapterList(){
+  if (!HAS_SCRIPT) return;
+  try {
+    const d = await (await fetch(`${SCRIPT_URL}?list=1`)).json();
+    if (d && Array.isArray(d.chapters)){ CHAPTERS = d.chapters; store.set('vbv:list', CHAPTERS); if (VIEW === 'home') renderHome(); }
+  } catch(e){ if (!CHAPTERS && VIEW === 'home') renderHome(true); }
+}
+function renderHome(failed){
+  const saved = store.get('vbv:state', null), r = $('#resume');
+  if (saved && store.get('vbv:started', false)){
+    r.hidden = false;
+    $('#resume-ref').textContent = `${saved.ch}:${(saved.from || 1) + (saved.idx || 0)}`;
+    $('#resume-sub').textContent = `${saved.book} ${saved.ch} · ${STEP_NAMES[saved.step || 0]}`;
+  } else r.hidden = true;
+  const list = $('#chapter-list');
+  if (!CHAPTERS){ list.innerHTML = `<p class="hint">${failed ? "Can't reach the verses. Check your internet connection, then reopen the app." : 'Loading chapters…'}</p>`; return; }
+  if (!CHAPTERS.length){ list.innerHTML = '<p class="hint">No chapters in the verse Sheet yet.</p>'; return; }
+  const books = {};
+  CHAPTERS.forEach(c => { const b = BIBLE.b.find(x => x.toLowerCase() === String(c.book).toLowerCase()) || c.book; (books[b] = books[b] || new Set()).add(c.ch); });
+  const order = Object.keys(books).sort((a, b) => BIBLE.b.indexOf(a) - BIBLE.b.indexOf(b));
+  list.innerHTML = order.map(b => `<div class="chapgroup">${order.length > 1 ? `<h3>${esc(b)}</h3>` : ''}<div class="chaps">${[...books[b]].sort((x, y) => x - y).map(ch => {
+    const started = Object.values(doneIn(b, ch)).some(p => p && p.done);
+    return `<button class="chap ${started ? 'started' : ''}" data-book="${esc(b)}" data-ch="${ch}" aria-label="${esc(b)} chapter ${ch}">${ch}</button>`;
+  }).join('')}</div></div>`).join('');
+}
+$('#chapter-list').addEventListener('click', e => { const c = e.target.closest('.chap'); if (!c) return; R.book = c.dataset.book; R.ch = +c.dataset.ch; store.set('vbv:reader', R); go('read'); });
+$('#resume').onclick = () => { store.set('vbv:started', true); go('mem'); };
+
 let R = store.get('vbv:reader', { book: 'Revelation', ch: 19 }); R.tr = 'NIV';
-async function renderReader(){
-  try { await loadBible(); } catch(e){ $('#r-text').innerHTML = '<p class="hint">Couldn\'t load the Bible text. Check your connection and reopen this tab.</p>'; return; }
-  if (!$('#r-book').options.length) fillSelect($('#r-book'), BIBLE.b, R.book);
-  const bi = BIBLE.b.indexOf(R.book), chs = BIBLE.t[bi];
-  fillSelect($('#r-ch'), chs.map((_, i) => i + 1), R.ch); $('#r-book').value = R.book;
-  if (R.tr === 'NIV') fetchShared(R.book, R.ch);
-  const vs = chapterNIV(R.book, R.ch);
-  $('#r-mem').disabled = !vs;
+function renderReader(){
+  fetchShared(R.book, R.ch);
+  $('#r-title').textContent = `${R.book} ${R.ch}`;
+  const ci = (R.ch - 1) % MASCOTS.length; if (MASCOTS[ci]) $('#r-coach').src = MASCOTS[ci].src;
+  const vs = chapterNIV(R.book, R.ch), k = `${R.book}:${R.ch}`;
   if (!vs){
-    $('#r-text').innerHTML = `<h2>${esc(R.book)} ${R.ch}</h2><p class="hint">${sharedChecked.has(`${R.book}:${R.ch}`) ? (sharedFailed.has(`${R.book}:${R.ch}`) ? "Can't reach the verses right now. Check your connection." : "This chapter hasn't been added to the app yet.") : 'Loading…'}</p>`;
-    store.set('vbv:reader', R); return;
+    $('#r-text').innerHTML = `<p class="hint">${sharedChecked.has(k) ? (sharedFailed.has(k) ? "Can't reach the verses right now. Check your connection." : "This chapter isn't in the verse Sheet yet.") : 'Loading…'}</p>`;
+    return;
   }
-  const list = Array.isArray(vs) ? vs : Object.keys(vs).reduce((a, k) => (a[k-1] = vs[k], a), []);
-  $('#r-text').innerHTML = `<h2>${esc(R.book)} ${R.ch} <span class="tag sun">${R.tr}</span></h2>` + '<div class="vtab">' + list.map((t, i) => !t ? '' : `<div class="vrow" data-v="${i+1}"><div class="n">${i+1}</div><div class="t">${esc(t)}</div></div>`).join('') + '</div>';
-  $('#r-prev').disabled = bi === 0 && R.ch === 1;
-  $('#r-next').disabled = bi === BIBLE.b.length - 1 && R.ch === chs.length;
-  store.set('vbv:reader', R);
+  const done = doneIn(R.book, R.ch);
+  const list = Array.isArray(vs) ? vs : Object.keys(vs).reduce((a, n) => (a[n-1] = vs[n], a), []);
+  $('#r-text').innerHTML = '<div class="vtab">' + list.map((t, i) => !t ? '' : `<button class="vrow" data-v="${i+1}"><span class="n">${i+1}</span><span class="t">${esc(t)}</span><span class="tick" aria-label="${done[i+1] && done[i+1].done ? 'learnt' : ''}">${done[i+1] && done[i+1].done ? '✓' : ''}</span></button>`).join('') + '</div>';
 }
-function step(dir){
-  const bi = BIBLE.b.indexOf(R.book); let ch = R.ch + dir;
-  if (ch < 1){ if (bi === 0) return; R.book = BIBLE.b[bi-1]; R.ch = BIBLE.t[bi-1].length; }
-  else if (ch > BIBLE.t[bi].length){ if (bi === BIBLE.b.length - 1) return; R.book = BIBLE.b[bi+1]; R.ch = 1; }
-  else R.ch = ch;
-  renderReader(); window.scrollTo({ top: 0 });
-}
-$('#r-prev').onclick = () => step(-1); $('#r-next').onclick = () => step(1);
-$('#r-book').onchange = () => { R.book = $('#r-book').value; R.ch = 1; renderReader(); };
-$('#r-ch').onchange = () => { R.ch = +$('#r-ch').value; renderReader(); };
-const memFrom = (v) => { const len = BIBLE.t[BIBLE.b.indexOf(R.book)][R.ch-1].length; switchTab('mem'); if (S.tr !== R.tr){ S.tr = R.tr; } setPassage(R.book, R.ch, 1, len, 0); const i = VS.findIndex(x => x.n === v); if (i > 0){ S.idx = i; saveState(); render(); } };
-$('#r-mem').onclick = () => memFrom(1);
-$('#r-text').addEventListener('click', e => { const p = e.target.closest('[data-v]'); if (p) memFrom(+p.dataset.v); });
+$('#r-text').addEventListener('click', e => {
+  const p = e.target.closest('[data-v]'); if (!p) return;
+  const vs = chapterNIV(R.book, R.ch); const nums = (Array.isArray(vs) ? vs.map((t, i) => t ? i + 1 : 0) : Object.keys(vs).map(Number)).filter(Boolean);
+  const last = Math.max(...nums), v = +p.dataset.v;
+  store.set('vbv:started', true);
+  S.tr = 'NIV'; setPassage(R.book, R.ch, 1, last, Math.max(0, v - 1));
+  go('mem');
+});
+$('#r-back').onclick = () => go('home');
+$('#m-back').onclick = () => { R.book = S.book; R.ch = S.ch; store.set('vbv:reader', R); go('read'); };
 
-/* ---------- Tabs ---------- */
-function switchTab(t){
-  $('#tab-mem').setAttribute('aria-selected', t === 'mem'); $('#tab-read').setAttribute('aria-selected', t === 'read');
-  $('#view-mem').hidden = t !== 'mem'; $('#view-read').hidden = t !== 'read';
-  if (t === 'read') renderReader();
-}
-$('#tab-mem').onclick = () => switchTab('mem'); $('#tab-read').onclick = () => switchTab('read');
-
-openPicker();
+go('home');
+loadChapterList();
 if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
-if (location.hash === '#read') switchTab('read');
 </script>
 </body>
 </html>
