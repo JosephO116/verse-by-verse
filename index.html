@@ -203,6 +203,43 @@ body{margin:0}
 .vrow:nth-child(odd){background:var(--paper)}
 .vrow .tick{color:var(--green);font-weight:800;padding-top:3px}
 .vtab .vrow{grid-template-columns:2.4em minmax(0,1fr) 1.2em}
+
+/* progress portal */
+.portal{width:100%;max-width:520px;background:var(--paper);border:3px solid var(--ink);border-radius:26px;box-shadow:6px 6px 0 var(--ink);padding:16px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;text-align:left}
+.ring{--p:0;width:108px;height:108px;border-radius:50%;border:3px solid var(--ink);background:conic-gradient(var(--green) calc(var(--p)*1%),var(--line) 0);display:grid;place-items:center;flex:none}
+.ring .in{width:76px;height:76px;border-radius:50%;background:var(--paper);border:3px solid var(--ink);display:grid;place-content:center;text-align:center}
+.ring b{font-family:var(--font-display);font-weight:800;font-size:24px;line-height:1}
+.ring small{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.ring.sm{width:68px;height:68px}.ring.sm .in{width:46px;height:46px}.ring.sm b{font-size:16px}
+.plevel b{font-family:var(--font-display);font-weight:800;font-size:18px;line-height:1.1}
+.lvbar{height:10px;background:var(--line);border-radius:999px;overflow:hidden;margin:5px 0 2px}
+.lvbar i{display:block;height:100%;background:var(--sun);width:0;border-radius:999px;transition:width .4s}
+.plevel small{font-size:12px;color:var(--muted);font-weight:700}
+.pstats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:10px}
+.pstats div{background:var(--tint);border:2px solid var(--line);border-radius:12px;padding:5px 2px;text-align:center;min-width:0}
+.pstats b{display:block;font-family:var(--font-display);font-weight:800;font-size:20px;line-height:1.1;font-variant-numeric:tabular-nums}
+.pstats small{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);line-height:1.15}
+.pstats .pts b{color:var(--pink)}.pstats .lrn b{color:var(--green)}.pstats .str b{color:#C98A00}
+#p-share{grid-column:1/-1;justify-self:center}
+@media (max-width:430px){.portal{grid-template-columns:1fr;justify-items:center;text-align:center}.pside{width:100%}}
+.chap.started{background:radial-gradient(circle,var(--paper) 0 56%,transparent 57%),conic-gradient(var(--green) calc(var(--p,0)*1%),var(--green-soft) 0)}
+.chap.full{background:var(--green);color:#fff}
+/* chapter progress + focus */
+.chprog{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center}
+.chprog .sum b{font-family:var(--font-display);font-weight:800;font-size:19px;line-height:1.1;display:block}
+.key{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;font-weight:800;color:var(--muted);margin-top:4px}
+.key span{display:inline-flex;align-items:center;gap:5px}.key i{width:12px;height:12px;border-radius:4px;border:2px solid var(--ink)}
+.m0{--mc:var(--paper)}.m1{--mc:#FFE9A8}.m2{--mc:#C9EEDC}.m3{--mc:#5CC79E}
+.focus{display:grid;gap:8px}
+.focus h3{font-family:var(--font-display);font-weight:800;font-size:18px;margin:0}
+.frow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--tint);border:2px solid var(--line);border-radius:14px;padding:6px 8px}
+.frow .r{font-family:var(--font-display);font-weight:800;background:var(--pink);color:#fff;border-radius:9px;padding:3px 8px 0;white-space:nowrap}
+.frow .t{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted)}
+.frow .btn{padding:5px 10px;font-size:13px;border-width:2px;box-shadow:0 3px 0 var(--ink);white-space:nowrap}
+.vtab .vrow{grid-template-columns:2.4em minmax(0,1fr) 2.6em;box-shadow:inset 6px 0 0 var(--mc,transparent)}
+.pips{display:flex;flex-direction:column;align-items:center;gap:3px;padding-top:6px}
+.pips span{display:flex;gap:3px}.pips i{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.pips i.on{background:var(--green)}.pips .st{color:#E6A700;font-size:13px;line-height:1}
 </style>
 </head>
 <body>
@@ -225,9 +262,22 @@ body{margin:0}
   <!-- HOME: pick a chapter -->
   <section id="view-home" class="home">
     <button class="resume" id="resume" hidden><span class="ref" id="resume-ref">19:5</span><span class="txt"><b>Carry on where you left off</b><small id="resume-sub"></small></span><span class="go" aria-hidden="true">›</span></button>
+<div class="portal" id="portal">
+      <div class="ring" id="p-ring"><div class="in"><b id="p-pct">0%</b><small>mastered</small></div></div>
+      <div class="pside">
+        <div class="plevel"><b id="p-level">Level 1</b><div class="lvbar"><i id="p-lvbar"></i></div><small id="p-next"></small></div>
+        <div class="pstats">
+          <div class="pts"><b id="p-pts">0</b><small>Points</small></div>
+          <div class="lrn"><b id="p-learnt">0</b><small>Verses learnt</small></div>
+          <div class="str"><b id="p-stars">0</b><small>★ Stars</small></div>
+          <div><b id="p-streak">0</b><small>Day streak</small></div>
+        </div>
+      </div>
+      <button class="tagbtn" id="p-share">📤 Share my progress</button>
+    </div>
     <h2>Pick a chapter</h2>
     <div id="chapter-list" style="display:grid;gap:22px;width:100%"><p class="hint">Loading chapters…</p></div>
-    <p class="hint">Green chapters are ones you've started.</p>
+    <p class="hint">Each ring fills as you master that chapter.</p>
   </section>
 
   <!-- MEMORISE -->
@@ -259,6 +309,7 @@ body{margin:0}
   <!-- READ -->
   <section id="view-read" class="wrap" hidden>
     <div class="topbar"><button class="back" id="r-back">‹ Chapters</button><h2 id="r-title">Revelation 19</h2><span class="tag sun">NIV</span></div>
+    <div class="panel soft" id="r-stats" hidden></div>
     <div class="tipbubble"><img id="r-coach" alt="" aria-hidden="true">Tap a verse to start memorising it!</div>
     <div class="panel"><div class="chapter" id="r-text"><p class="hint">Loading…</p></div></div>
   </section>
@@ -308,6 +359,42 @@ const saveState = () => store.set('vbv:state', S);
 const progKey = () => `vbv:prog:${S.tr}:${S.book}:${S.ch}`;
 let PROG = store.get(progKey(), {});
 const saveProg = () => store.set(progKey(), PROG);
+/* ---------- Mastery, points, streak ---------- */
+function mastery(p){
+  if (!p) return 0; const r = p.reps || 0, w = p.done || r > 0;
+  return ((p.g || w) ? 20 : 0) + ((p.l || w) ? 25 : 0) + (w ? 35 : 0) + (r >= 2 ? 10 : 0) + (r >= 3 ? 10 : 0);
+}
+const mClass = m => m >= 100 ? 3 : m >= 60 ? 2 : m > 0 ? 1 : 0;
+const todayStr = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+function logDay(){ const d = store.get('vbv:days', []), t = todayStr(); if (d[d.length-1] !== t){ d.push(t); store.set('vbv:days', d.slice(-400)); } }
+function streak(){
+  const set = new Set(store.get('vbv:days', [])), d = new Date(); let n = 0;
+  const key = x => `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`;
+  if (!set.has(key(d))) d.setDate(d.getDate() - 1);
+  while (set.has(key(d))){ n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+function addPts(n){ store.set('vbv:pts', store.get('vbv:pts', 0) + n); logDay(); }
+function markStep(targets, key, pts){
+  targets.forEach(t => { const q = PROG[t.n] = PROG[t.n] || {}; q[key] = true; });
+  saveProg(); addPts(pts);
+  setTimeout(() => { const b = $('#bubble'); if (b) b.textContent = `${b.textContent} +${pts} pts`; }, 30);
+}
+const LEVELS = [[0,'👋 Just starting'],[50,'🌱 Seedling'],[150,'🌿 Sprouting'],[350,'🔥 On a roll'],[700,'🪴 Rooted'],[1200,'🍇 Fruitful'],[2000,'🪔 Lamp-bearer'],[3000,'🛡️ Watchman'],[4500,'⭐ Verse keeper'],[6500,'🏆 Scripture champion']];
+function levelInfo(pts){
+  let i = 0; while (i + 1 < LEVELS.length && pts >= LEVELS[i+1][0]) i++;
+  const nx = LEVELS[i+1]; return { n: i + 1, name: LEVELS[i][1], next: nx, frac: nx ? (pts - LEVELS[i][0]) / (nx[0] - LEVELS[i][0]) : 1 };
+}
+function verseCount(book, ch){
+  const bi = BIBLE.b.indexOf(book); const c = bi >= 0 && BIBLE.t[bi][ch-1]; if (c) return c.length;
+  const v = store.get(`vbv:ch:${book}:${ch}`, null); return v ? Object.keys(v).length : 0;
+}
+function chapterMastery(book, ch){
+  const prog = store.get(`vbv:prog:NIV:${book}:${ch}`, {}), total = verseCount(book, ch);
+  let sum = 0, learnt = 0, stars = 0;
+  Object.keys(prog).forEach(n => { const p = prog[n]; sum += mastery(p); if (p && (p.done || p.reps)) learnt++; if (p && (p.reps || 0) >= 3) stars++; });
+  return { pct: total ? Math.min(100, Math.round(sum / total)) : 0, raw: sum, total, learnt, stars, prog };
+}
 
 function passageVerses(){
   const src = chapterNIV(S.book, S.ch);
@@ -476,7 +563,7 @@ function stageGaps(v, el){
     <div class="row"><button class="btn quiet" id="g-show">Show answers</button><span class="spacer"></span>
     <button class="btn primary" id="g-check">Check</button><button class="btn go" id="g-next" disabled>Next: First letters →</button></div>`;
   const gaps = [...el.querySelectorAll('.gap')];
-  const update = () => { if (gaps.every(g => g.classList.contains('right') || g.classList.contains('shown'))){ if ($('#g-next').disabled){ if (gaps.every(g => g.classList.contains('right'))) cheer(50); else say('All filled. Read it aloud once more!'); } $('#g-next').disabled = false; } };
+  const update = () => { if (gaps.every(g => g.classList.contains('right') || g.classList.contains('shown'))){ if ($('#g-next').disabled){ const allRight = gaps.every(g => g.classList.contains('right')); if (allRight) cheer(50); else say('All filled. Read it aloud once more!'); markStep(target, 'g', allRight ? 15 : 5); } $('#g-next').disabled = false; } };
   gaps.forEach((g, i) => g.addEventListener('input', () => {
     g.classList.remove('wrong');
     if (norm(g.value) === g.dataset.a){ g.classList.add('right'); g.readOnly = true; const nx = gaps.slice(i + 1).find(x => !x.readOnly); (nx || $('#g-next')).focus(); update(); }
@@ -554,7 +641,7 @@ function stageLetters(v, el){
     }
     paint();
     if (pos >= n){
-      $('#l-msg').innerHTML = `<div class="toast good">Done with ${errs} mistake${errs===1?'':'s'}.</div>`; cheer(errs ? 50 : 90);
+      $('#l-msg').innerHTML = `<div class="toast good">Done with ${errs} mistake${errs===1?'':'s'}.</div>`; cheer(errs ? 50 : 90); markStep(target, 'l', errs ? 15 : 25);
       $('#l-next').disabled = false; typer.blur(); $('#l-msg').scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
   });
@@ -602,7 +689,7 @@ function stageWrite(v, el){
     if (pass){
       const tgt = target.length > 1 ? target : [v];
       tgt.forEach(t => { const q = PROG[t.n] = PROG[t.n] || {}; q.done = true; if (t.n === v.n) q.reps = (q.reps || 0) + 1; });
-      saveProg(); renderChips(VS); cheer(pct === 100 ? 120 : 70);
+      saveProg(); addPts(pct === 100 ? 35 : 25); renderChips(VS); cheer(pct === 100 ? 120 : 70); setTimeout(() => { const b = $('#bubble'); if (b) b.textContent += ` +${pct === 100 ? 35 : 25} pts`; }, 30);
     } else say(pct >= 80 ? `${pct}%! Fix the red words and go again.` : pick(NUDGES));
     const missed = hit.filter(x => !x).length;
     $('#w-out').innerHTML = `<div class="row" style="align-items:baseline"><span class="score" style="color:var(${pass?'--ok':'--bad'})">${pct}%</span>
@@ -646,6 +733,7 @@ function renderHome(failed){
     $('#resume-ref').textContent = `${saved.ch}:${(saved.from || 1) + (saved.idx || 0)}`;
     $('#resume-sub').textContent = `${saved.book} ${saved.ch} · ${STEP_NAMES[saved.step || 0]}`;
   } else r.hidden = true;
+  renderPortal();
   const list = $('#chapter-list');
   if (!CHAPTERS){ list.innerHTML = `<p class="hint">${failed ? "Can't reach the verses. Check your internet connection, then reopen the app." : 'Loading chapters…'}</p>`; return; }
   if (!CHAPTERS.length){ list.innerHTML = '<p class="hint">No chapters in the verse Sheet yet.</p>'; return; }
@@ -653,10 +741,33 @@ function renderHome(failed){
   CHAPTERS.forEach(c => { const b = BIBLE.b.find(x => x.toLowerCase() === String(c.book).toLowerCase()) || c.book; (books[b] = books[b] || new Set()).add(c.ch); });
   const order = Object.keys(books).sort((a, b) => BIBLE.b.indexOf(a) - BIBLE.b.indexOf(b));
   list.innerHTML = order.map(b => `<div class="chapgroup">${order.length > 1 ? `<h3>${esc(b)}</h3>` : ''}<div class="chaps">${[...books[b]].sort((x, y) => x - y).map(ch => {
-    const started = Object.values(doneIn(b, ch)).some(p => p && p.done);
-    return `<button class="chap ${started ? 'started' : ''}" data-book="${esc(b)}" data-ch="${ch}" aria-label="${esc(b)} chapter ${ch}">${ch}</button>`;
+    const cm = chapterMastery(b, ch), started = cm.raw > 0;
+    return `<button class="chap ${started ? 'started' : ''} ${cm.pct >= 100 ? 'full' : ''}" style="--p:${cm.pct}" data-book="${esc(b)}" data-ch="${ch}" aria-label="${esc(b)} chapter ${ch}${started ? `, ${cm.pct}% mastered` : ''}">${ch}</button>`;
   }).join('')}</div></div>`).join('');
 }
+function portalData(){
+  let raw = 0, total = 0, learnt = 0, stars = 0;
+  (CHAPTERS || []).forEach(c => { const b = BIBLE.b.find(x => x.toLowerCase() === String(c.book).toLowerCase()) || c.book; const m = chapterMastery(b, c.ch); raw += m.raw; total += m.total; learnt += m.learnt; stars += m.stars; });
+  const pct = total ? Math.round(raw / total) : 0, shown = raw > 0 && pct === 0 ? '<1' : pct;
+  const pts = store.get('vbv:pts', 0);
+  return { pct, shown, learnt, stars, pts, st: streak(), lv: levelInfo(pts) };
+}
+function renderPortal(){
+  const d = portalData();
+  $('#p-ring').style.setProperty('--p', d.pct); $('#p-pct').textContent = `${d.shown}%`;
+  $('#p-level').textContent = `Level ${d.lv.n} · ${d.lv.name}`;
+  $('#p-lvbar').style.width = `${Math.round(d.lv.frac * 100)}%`;
+  $('#p-next').textContent = d.lv.next ? `${d.lv.next[0] - d.pts} points to Level ${d.lv.n + 1}` : 'Top level reached!';
+  $('#p-pts').textContent = d.pts.toLocaleString('en-GB'); $('#p-learnt').textContent = d.learnt; $('#p-stars').textContent = d.stars; $('#p-streak').textContent = d.st;
+}
+$('#p-share').onclick = async () => {
+  const d = portalData(), url = location.origin + location.pathname;
+  const text = [`📖 My Verse by Verse progress`, `📊 ${d.shown}% mastered · Level ${d.lv.n} ${d.lv.name}`, `✅ ${d.learnt} verse${d.learnt === 1 ? '' : 's'} learnt · ★ ${d.stars}`, `💯 ${d.pts.toLocaleString('en-GB')} points${d.st ? ` · 🔥 ${d.st}-day streak` : ''}`, `Can you beat me?`].join('\n');
+  const btn = $('#p-share');
+  try { if (navigator.share){ await navigator.share({ title: 'Verse by Verse', text, url }); return; } } catch(e){ if (e && e.name === 'AbortError') return; }
+  try { await navigator.clipboard.writeText(text + '\n' + url); btn.textContent = 'Copied ✓'; } catch(e){ btn.textContent = 'Could not copy'; }
+  setTimeout(() => btn.textContent = '📤 Share my progress', 1800);
+};
 $('#chapter-list').addEventListener('click', e => { const c = e.target.closest('.chap'); if (!c) return; R.book = c.dataset.book; R.ch = +c.dataset.ch; store.set('vbv:reader', R); go('read'); });
 $('#resume').onclick = () => { store.set('vbv:started', true); go('mem'); };
 
@@ -667,12 +778,18 @@ function renderReader(){
   const ci = (R.ch - 1) % MASCOTS.length; if (MASCOTS[ci]) $('#r-coach').src = MASCOTS[ci].src;
   const vs = chapterNIV(R.book, R.ch), k = `${R.book}:${R.ch}`;
   if (!vs){
+    $('#r-stats').hidden = true;
     $('#r-text').innerHTML = `<p class="hint">${sharedChecked.has(k) ? (sharedFailed.has(k) ? "Can't reach the verses right now. Check your connection." : "This chapter isn't in the verse Sheet yet.") : 'Loading…'}</p>`;
     return;
   }
   const done = doneIn(R.book, R.ch);
   const list = Array.isArray(vs) ? vs : Object.keys(vs).reduce((a, n) => (a[n-1] = vs[n], a), []);
-  $('#r-text').innerHTML = '<div class="vtab">' + list.map((t, i) => !t ? '' : `<button class="vrow" data-v="${i+1}"><span class="n">${i+1}</span><span class="t">${esc(t)}</span><span class="tick" aria-label="${done[i+1] && done[i+1].done ? 'learnt' : ''}">${done[i+1] && done[i+1].done ? '✓' : ''}</span></button>`).join('') + '</div>';
+  $('#r-text').innerHTML = '<div class="vtab">' + list.map((t, i) => {
+    if (!t) return ''; const p = done[i+1] || {}, m = mastery(p), w = p.done || p.reps > 0;
+    const pips = `<span class="pips" aria-hidden="true"><span><i class="${p.g || w ? 'on' : ''}"></i><i class="${p.l || w ? 'on' : ''}"></i><i class="${w ? 'on' : ''}"></i></span>${(p.reps || 0) >= 3 ? '<b class="st">★</b>' : ''}</span>`;
+    return `<button class="vrow m${mClass(m)}" data-v="${i+1}" aria-label="Verse ${i+1}${m ? `, ${m}% mastered` : ''}"><span class="n">${i+1}</span><span class="t">${esc(t)}</span>${pips}</button>`;
+  }).join('') + '</div>';
+  renderChapterStats(list, done);
 }
 $('#r-text').addEventListener('click', e => {
   const p = e.target.closest('[data-v]'); if (!p) return;
@@ -682,6 +799,28 @@ $('#r-text').addEventListener('click', e => {
   S.tr = 'NIV'; setPassage(R.book, R.ch, 1, last, Math.max(0, v - 1));
   go('mem');
 });
+const NEXT_STEP = p => { const w = p && (p.done || p.reps > 0); return !p || !mastery(p) ? 0 : !(p.g || w) ? 1 : !(p.l || w) ? 2 : 3; };
+function renderChapterStats(list, done){
+  const box = $('#r-stats'), cm = chapterMastery(R.book, R.ch);
+  const rows = list.map((t, i) => t ? { n: i + 1, t, p: done[i+1], m: mastery(done[i+1]) } : null).filter(Boolean);
+  const weak = rows.filter(r => r.m > 0 && r.m < 100).sort((a, b) => a.m - b.m || a.n - b.n).slice(0, 3);
+  rows.filter(r => !r.m).slice(0, 3 - weak.length).forEach(r => weak.push(r));
+  const short = t => { const w = words(t); return w.slice(0, 7).join(' ') + (w.length > 7 ? '…' : ''); };
+  box.hidden = false;
+  box.innerHTML = `<div class="chprog"><div class="ring sm" style="--p:${cm.pct}"><div class="in"><b>${cm.pct}%</b></div></div>
+    <div class="sum"><b>${cm.learnt} of ${rows.length} verses learnt${cm.stars ? ` · ★ ${cm.stars}` : ''}</b>
+    <div class="key"><span><i class="m0" style="background:var(--mc)"></i>New</span><span><i class="m1" style="background:var(--mc)"></i>Started</span><span><i class="m2" style="background:var(--mc)"></i>Strong</span><span><i class="m3" style="background:var(--mc)"></i>Mastered</span></div>
+    <p class="hint" style="font-size:12px;margin-top:4px">Dots on each verse: Fill gaps · First letters · Write out</p></div></div>
+    ${weak.length ? `<div class="focus"><h3>${rows.some(r => r.m) ? 'Focus next' : 'Start here'}</h3>${weak.map(r => `<div class="frow"><span class="r">${R.ch}:${r.n}</span><span class="t">${esc(short(r.t))}</span><button class="btn ${r.m ? 'primary' : 'go'}" data-fv="${r.n}" data-fs="${NEXT_STEP(r.p)}">${STEP_NAMES[NEXT_STEP(r.p)]} →</button></div>`).join('')}</div>` : '<p class="hint">Every verse here is mastered. 🏆 Keep it fresh by writing it out again.</p>'}`;
+}
+function startVerse(v, step){
+  const vs = chapterNIV(R.book, R.ch); const nums = (Array.isArray(vs) ? vs.map((t, i) => t ? i + 1 : 0) : Object.keys(vs).map(Number)).filter(Boolean);
+  store.set('vbv:started', true);
+  S.tr = 'NIV'; setPassage(R.book, R.ch, 1, Math.max(...nums), Math.max(0, v - 1));
+  if (step){ S.step = step; saveState(); }
+  go('mem');
+}
+$('#r-stats').addEventListener('click', e => { const b = e.target.closest('[data-fv]'); if (b) startVerse(+b.dataset.fv, +b.dataset.fs); });
 $('#r-back').onclick = () => go('home');
 $('#m-back').onclick = () => { R.book = S.book; R.ch = S.ch; store.set('vbv:reader', R); go('read'); };
 
