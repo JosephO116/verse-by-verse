@@ -240,6 +240,41 @@ body{margin:0}
 .pips{display:flex;flex-direction:column;align-items:center;gap:3px;padding-top:6px}
 .pips span{display:flex;gap:3px}.pips i{width:7px;height:7px;border-radius:50%;background:var(--line)}
 .pips i.on{background:var(--green)}.pips .st{color:#E6A700;font-size:13px;line-height:1}
+/* exams, modes, guide */
+.examlist{display:grid;gap:10px;width:100%;max-width:520px}
+.exam{display:flex;align-items:center;gap:12px;text-align:left;width:100%;background:var(--sun-soft);border:3px solid var(--ink);border-radius:18px;box-shadow:0 4px 0 var(--ink);padding:8px 12px}
+.exam .when{display:grid;place-items:center;min-width:54px;background:var(--paper);border:2px solid var(--ink);border-radius:12px;padding:2px 6px;line-height:1}
+.exam .when b{font-family:var(--font-display);font-weight:800;font-size:24px;color:var(--pink)}
+.exam .when small{font-size:10px;font-weight:800;text-transform:uppercase;color:var(--muted)}
+.exam .txt{display:flex;flex-direction:column;flex:1;min-width:0}
+.exam .txt b{font-weight:800;font-size:15px}.exam .txt small{font-size:13px;color:var(--muted);font-weight:700}
+.exam .ready{font-family:var(--font-display);font-weight:800;font-size:18px;color:var(--green);white-space:nowrap}
+.examtag{display:inline-block;font-size:13px;font-weight:800;background:var(--sun-soft);border:2px solid var(--sun);border-radius:999px;padding:2px 10px;margin-top:6px}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mode{display:flex;flex-direction:column;align-items:center;gap:0;border:3px solid var(--ink);border-radius:16px;box-shadow:0 4px 0 var(--ink);padding:8px 6px;font-family:var(--font-display);font-weight:800;font-size:17px;background:var(--paper)}
+.mode small{font-family:var(--font-body);font-size:12px;font-weight:800;color:var(--muted)}
+.mode.lis{background:#E4F3FF}.mode.pic{background:var(--pink-soft)}
+.mode:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.pips i.lis.on{background:#2E8BD8}.pips i.pic.on{background:var(--pink)}
+.pips span{gap:2px}.pips i{width:6px;height:6px}
+.vtab .vrow{grid-template-columns:2.4em minmax(0,1fr) 3em}
+.rate{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.rate .btn{padding:8px 4px;font-size:14px}
+.clue{font-size:30px;line-height:1.3;letter-spacing:.08em;text-align:center;word-break:break-word}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.pcard{border:3px solid var(--ink);border-radius:16px;background:var(--paper);box-shadow:0 4px 0 var(--ink);padding:8px;text-align:center;display:grid;gap:4px;align-content:start}
+.pcard .r{font-family:var(--font-display);font-weight:800;color:var(--pink)}
+.pcard .clue{font-size:24px}
+.pcard .t{font-size:14px;line-height:1.45;font-weight:700;text-align:left}
+.opts{display:grid;gap:10px}
+.opt{border:3px solid var(--ink);border-radius:16px;background:var(--paper);box-shadow:0 4px 0 var(--ink);padding:10px;text-align:left;font-weight:700}
+.opt.clueopt{text-align:center;font-size:28px;letter-spacing:.08em}
+.opt.right{background:var(--green-soft);border-color:var(--green);box-shadow:0 4px 0 var(--green)}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad);box-shadow:0 4px 0 var(--bad)}
+details.guide{width:100%;max-width:520px;text-align:left;background:var(--paper);border:2px solid var(--line);border-radius:16px;padding:10px 14px}
+details.guide summary{font-family:var(--font-display);font-weight:800;font-size:17px;cursor:pointer}
+details.guide ul{margin:8px 0 0;padding-left:20px;font-size:14px;line-height:1.5}
+details.guide li{margin-bottom:6px}
 </style>
 </head>
 <body>
@@ -262,7 +297,8 @@ body{margin:0}
   <!-- HOME: pick a chapter -->
   <section id="view-home" class="home">
     <button class="resume" id="resume" hidden><span class="ref" id="resume-ref">19:5</span><span class="txt"><b>Carry on where you left off</b><small id="resume-sub"></small></span><span class="go" aria-hidden="true">›</span></button>
-<div class="portal" id="portal">
+<div class="examlist" id="exams" hidden></div>
+    <div class="portal" id="portal">
       <div class="ring" id="p-ring"><div class="in"><b id="p-pct">0%</b><small>mastered</small></div></div>
       <div class="pside">
         <div class="plevel"><b id="p-level">Level 1</b><div class="lvbar"><i id="p-lvbar"></i></div><small id="p-next"></small></div>
@@ -278,6 +314,15 @@ body{margin:0}
     <h2>Pick a chapter</h2>
     <div id="chapter-list" style="display:grid;gap:22px;width:100%"><p class="hint">Loading chapters…</p></div>
     <p class="hint">Each ring fills as you master that chapter.</p>
+    <details class="guide"><summary>📘 How it works</summary><ul>
+      <li><b>Memorise (the main part):</b> tap a chapter, then a verse. Work through Read → Fill gaps → First letters → Write out. In First letters you start again if your slips reach 10% of the words.</li>
+      <li><b>🎧 Listen:</b> your phone reads each verse aloud. Say it along or back, then rate yourself: Knew it, Nearly or Not yet.</li>
+      <li><b>🖼️ Picture clues:</b> each verse gets an emoji picture made from its key words. Learn the cards, then test yourself by matching pictures to verses.</li>
+      <li><b>Mastery score:</b> 70% comes from the memorise steps (writing it out correctly 3 times gives the full 70), 15% from your Picture test and 15% from Listen.</li>
+      <li><b>Points and levels:</b> every step, picture and listen you finish earns points. Points move you up the levels. Practise any day to keep your streak going.</li>
+      <li><b>Exams:</b> upcoming exams show a countdown and how ready you are for those chapters.</li>
+      <li>Your progress is saved on this phone.</li>
+    </ul></details>
   </section>
 
   <!-- MEMORISE -->
@@ -304,6 +349,12 @@ body{margin:0}
       <div id="stage"></div>
     </main>
     <p class="foot">Read → Fill gaps → First letters → Write out. A verse turns green once you write it out correctly. ★ means you've written it correctly 3 times.</p>
+  </section>
+
+  <!-- LISTEN / PICTURES -->
+  <section id="view-mode" class="wrap" hidden>
+    <div class="topbar"><button class="back" id="x-back">‹ Revelation 19</button><span class="count" id="x-count"></span></div>
+    <main class="card" id="x-body"></main>
   </section>
 
   <!-- READ -->
@@ -360,10 +411,11 @@ const progKey = () => `vbv:prog:${S.tr}:${S.book}:${S.ch}`;
 let PROG = store.get(progKey(), {});
 const saveProg = () => store.set(progKey(), PROG);
 /* ---------- Mastery, points, streak ---------- */
-function mastery(p){
+function drillScore(p){
   if (!p) return 0; const r = p.reps || 0, w = p.done || r > 0;
   return ((p.g || w) ? 20 : 0) + ((p.l || w) ? 25 : 0) + (w ? 35 : 0) + (r >= 2 ? 10 : 0) + (r >= 3 ? 10 : 0);
 }
+function mastery(p){ if (!p) return 0; return Math.round(drillScore(p) * .7 + (p.pic || 0) * .15 + (p.lis || 0) * .15); }
 const mClass = m => m >= 100 ? 3 : m >= 60 ? 2 : m > 0 ? 1 : 0;
 const todayStr = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
 function logDay(){ const d = store.get('vbv:days', []), t = todayStr(); if (d[d.length-1] !== t){ d.push(t); store.set('vbv:days', d.slice(-400)); } }
@@ -392,8 +444,10 @@ function verseCount(book, ch){
 function chapterMastery(book, ch){
   const prog = store.get(`vbv:prog:NIV:${book}:${ch}`, {}), total = verseCount(book, ch);
   let sum = 0, learnt = 0, stars = 0;
-  Object.keys(prog).forEach(n => { const p = prog[n]; sum += mastery(p); if (p && (p.done || p.reps)) learnt++; if (p && (p.reps || 0) >= 3) stars++; });
-  return { pct: total ? Math.min(100, Math.round(sum / total)) : 0, raw: sum, total, learnt, stars, prog };
+  let lis = [], pic = [];
+  Object.keys(prog).forEach(n => { const p = prog[n]; sum += mastery(p); if (p && (p.done || p.reps)) learnt++; if (p && (p.reps || 0) >= 3) stars++; if (p && p.lis != null) lis.push(p.lis); if (p && p.pic != null) pic.push(p.pic); });
+  const avg = a => a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length) : null;
+  return { pct: total ? Math.min(100, Math.round(sum / total)) : 0, raw: sum, total, learnt, stars, prog, lisN: lis.length, picN: pic.length, lisAvg: avg(lis), picAvg: avg(pic) };
 }
 
 function passageVerses(){
@@ -710,11 +764,13 @@ function stageWrite(v, el){
 let VIEW = 'home';
 function go(view){
   VIEW = view;
-  $('#view-home').hidden = view !== 'home'; $('#view-read').hidden = view !== 'read'; $('#view-mem').hidden = view !== 'mem';
+  if (view !== 'mode') stopSpeech();
+  $('#view-home').hidden = view !== 'home'; $('#view-read').hidden = view !== 'read'; $('#view-mem').hidden = view !== 'mem'; $('#view-mode').hidden = view !== 'mode';
   document.querySelector('.hero').hidden = view !== 'home';
   if (view === 'home') renderHome();
   if (view === 'read') renderReader();
   if (view === 'mem') render();
+  if (view === 'mode') renderMode();
   window.scrollTo({ top: 0 });
 }
 const doneIn = (book, ch) => store.get(`vbv:prog:NIV:${book}:${ch}`, {});
@@ -723,6 +779,7 @@ async function loadChapterList(){
   if (!HAS_SCRIPT) return;
   try {
     const d = await (await fetch(`${SCRIPT_URL}?list=1`)).json();
+    if (d && Array.isArray(d.exams)) store.set('vbv:exams', d.exams);
     if (d && Array.isArray(d.chapters)){ CHAPTERS = d.chapters; store.set('vbv:list', CHAPTERS); if (VIEW === 'home') renderHome(); }
   } catch(e){ if (!CHAPTERS && VIEW === 'home') renderHome(true); }
 }
@@ -733,7 +790,7 @@ function renderHome(failed){
     $('#resume-ref').textContent = `${saved.ch}:${(saved.from || 1) + (saved.idx || 0)}`;
     $('#resume-sub').textContent = `${saved.book} ${saved.ch} · ${STEP_NAMES[saved.step || 0]}`;
   } else r.hidden = true;
-  renderPortal();
+  renderPortal(); renderExams();
   const list = $('#chapter-list');
   if (!CHAPTERS){ list.innerHTML = `<p class="hint">${failed ? "Can't reach the verses. Check your internet connection, then reopen the app." : 'Loading chapters…'}</p>`; return; }
   if (!CHAPTERS.length){ list.innerHTML = '<p class="hint">No chapters in the verse Sheet yet.</p>'; return; }
@@ -786,7 +843,7 @@ function renderReader(){
   const list = Array.isArray(vs) ? vs : Object.keys(vs).reduce((a, n) => (a[n-1] = vs[n], a), []);
   $('#r-text').innerHTML = '<div class="vtab">' + list.map((t, i) => {
     if (!t) return ''; const p = done[i+1] || {}, m = mastery(p), w = p.done || p.reps > 0;
-    const pips = `<span class="pips" aria-hidden="true"><span><i class="${p.g || w ? 'on' : ''}"></i><i class="${p.l || w ? 'on' : ''}"></i><i class="${w ? 'on' : ''}"></i></span>${(p.reps || 0) >= 3 ? '<b class="st">★</b>' : ''}</span>`;
+    const pips = `<span class="pips" aria-hidden="true"><span><i class="${p.g || w ? 'on' : ''}"></i><i class="${p.l || w ? 'on' : ''}"></i><i class="${w ? 'on' : ''}"></i><i class="lis ${p.lis >= 60 ? 'on' : ''}"></i><i class="pic ${p.pic >= 100 ? 'on' : ''}"></i></span>${(p.reps || 0) >= 3 ? '<b class="st">★</b>' : ''}</span>`;
     return `<button class="vrow m${mClass(m)}" data-v="${i+1}" aria-label="Verse ${i+1}${m ? `, ${m}% mastered` : ''}"><span class="n">${i+1}</span><span class="t">${esc(t)}</span>${pips}</button>`;
   }).join('') + '</div>';
   renderChapterStats(list, done);
@@ -799,7 +856,8 @@ $('#r-text').addEventListener('click', e => {
   S.tr = 'NIV'; setPassage(R.book, R.ch, 1, last, Math.max(0, v - 1));
   go('mem');
 });
-const NEXT_STEP = p => { const w = p && (p.done || p.reps > 0); return !p || !mastery(p) ? 0 : !(p.g || w) ? 1 : !(p.l || w) ? 2 : 3; };
+const NEXT_STEP = p => { const w = p && (p.done || p.reps > 0); return !p || !drillScore(p) ? 0 : !(p.g || w) ? 1 : !(p.l || w) ? 2 : drillScore(p) < 100 ? 3 : (p.lis || 0) < 100 ? 4 : 5; };
+const FOCUS_NAMES = ['Read', 'Fill gaps', 'First letters', 'Write out', '🎧 Listen', '🖼️ Pictures'];
 function renderChapterStats(list, done){
   const box = $('#r-stats'), cm = chapterMastery(R.book, R.ch);
   const rows = list.map((t, i) => t ? { n: i + 1, t, p: done[i+1], m: mastery(done[i+1]) } : null).filter(Boolean);
@@ -810,17 +868,182 @@ function renderChapterStats(list, done){
   box.innerHTML = `<div class="chprog"><div class="ring sm" style="--p:${cm.pct}"><div class="in"><b>${cm.pct}%</b></div></div>
     <div class="sum"><b>${cm.learnt} of ${rows.length} verses learnt${cm.stars ? ` · ★ ${cm.stars}` : ''}</b>
     <div class="key"><span><i class="m0" style="background:var(--mc)"></i>New</span><span><i class="m1" style="background:var(--mc)"></i>Started</span><span><i class="m2" style="background:var(--mc)"></i>Strong</span><span><i class="m3" style="background:var(--mc)"></i>Mastered</span></div>
-    <p class="hint" style="font-size:12px;margin-top:4px">Dots on each verse: Fill gaps · First letters · Write out</p></div></div>
-    ${weak.length ? `<div class="focus"><h3>${rows.some(r => r.m) ? 'Focus next' : 'Start here'}</h3>${weak.map(r => `<div class="frow"><span class="r">${R.ch}:${r.n}</span><span class="t">${esc(short(r.t))}</span><button class="btn ${r.m ? 'primary' : 'go'}" data-fv="${r.n}" data-fs="${NEXT_STEP(r.p)}">${STEP_NAMES[NEXT_STEP(r.p)]} →</button></div>`).join('')}</div>` : '<p class="hint">Every verse here is mastered. 🏆 Keep it fresh by writing it out again.</p>'}`;
+    <p class="hint" style="font-size:12px;margin-top:4px">Dots: Fill gaps · First letters · Write out · <span style="color:#2E8BD8">Listen</span> · <span style="color:var(--pink)">Pictures</span></p>${examTag(R.book, R.ch)}</div></div>
+    <div class="modes"><button class="mode lis" data-mode="listen">🎧 Listen<small>${cm.lisN}/${rows.length} rated${cm.lisAvg != null ? ` · ${cm.lisAvg}%` : ''}</small></button><button class="mode pic" data-mode="pics">🖼️ Picture clues<small>${cm.picN}/${rows.length} tested${cm.picAvg != null ? ` · ${cm.picAvg}%` : ''}</small></button></div>
+    ${weak.length ? `<div class="focus"><h3>${rows.some(r => r.m) ? 'Focus next' : 'Start here'}</h3>${weak.map(r => `<div class="frow"><span class="r">${R.ch}:${r.n}</span><span class="t">${esc(short(r.t))}</span><button class="btn ${r.m ? 'primary' : 'go'}" data-fv="${r.n}" data-fs="${NEXT_STEP(r.p)}">${FOCUS_NAMES[NEXT_STEP(r.p)]} →</button></div>`).join('')}</div>` : '<p class="hint">Every verse here is mastered. 🏆 Keep it fresh by writing it out again.</p>'}`;
 }
 function startVerse(v, step){
   const vs = chapterNIV(R.book, R.ch); const nums = (Array.isArray(vs) ? vs.map((t, i) => t ? i + 1 : 0) : Object.keys(vs).map(Number)).filter(Boolean);
   store.set('vbv:started', true);
   S.tr = 'NIV'; setPassage(R.book, R.ch, 1, Math.max(...nums), Math.max(0, v - 1));
+  if (step >= 4){ openMode(step === 4 ? 'listen' : 'pics', v); return; }
   if (step){ S.step = step; saveState(); }
   go('mem');
 }
-$('#r-stats').addEventListener('click', e => { const b = e.target.closest('[data-fv]'); if (b) startVerse(+b.dataset.fv, +b.dataset.fs); });
+$('#r-stats').addEventListener('click', e => { const m = e.target.closest('[data-mode]'); if (m){ openMode(m.dataset.mode); return; } const b = e.target.closest('[data-fv]'); if (b) startVerse(+b.dataset.fv, +b.dataset.fs); });
+/* ---------- Exams (from the Sheet's Exams tab) ---------- */
+function upcomingExams(){
+  const t = todayStr();
+  return store.get('vbv:exams', []).filter(x => x && x.date >= t).sort((a, b) => a.date < b.date ? -1 : 1);
+}
+const daysTo = d => Math.round((new Date(d + 'T00:00:00') - new Date(todayStr() + 'T00:00:00')) / 864e5);
+const prettyDate = d => new Date(d + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+function chRange(chs){
+  const a = [...new Set(chs)].sort((x, y) => x - y), out = [];
+  for (let i = 0; i < a.length; i++){ let j = i; while (j + 1 < a.length && a[j+1] === a[j] + 1) j++; out.push(i === j ? `${a[i]}` : `${a[i]}–${a[j]}`); i = j; }
+  return out.join(', ');
+}
+function examBook(x){ return BIBLE.b.find(b => b.toLowerCase() === String(x.book || '').toLowerCase()) || x.book || 'Revelation'; }
+function examReady(x){
+  let raw = 0, total = 0; const b = examBook(x);
+  (x.chapters || []).forEach(ch => { const m = chapterMastery(b, ch); raw += m.raw; total += m.total; });
+  return total ? Math.round(raw / total) : 0;
+}
+function renderExams(){
+  const box = $('#exams'), ex = upcomingExams().slice(0, 2);
+  box.hidden = !ex.length; if (!ex.length) return;
+  box.innerHTML = ex.map((x, k) => { const d = daysTo(x.date), b = examBook(x);
+    return `<button class="exam" data-k="${k}"><span class="when"><b>${d}</b><small>${d === 1 ? 'day' : 'days'}</small></span><span class="txt"><b>📅 ${esc(x.name || 'Exam')}${d === 0 ? ' is today!' : d === 1 ? ' is tomorrow!' : ''}</b><small>${prettyDate(x.date)} · ${esc(b)} ${chRange(x.chapters || [])}</small></span><span class="ready">${examReady(x)}%<br><small style="font-size:10px;color:var(--muted)">READY</small></span></button>`; }).join('');
+}
+$('#exams').addEventListener('click', e => {
+  const b = e.target.closest('.exam'); if (!b) return; const x = upcomingExams()[+b.dataset.k]; if (!x || !(x.chapters || []).length) return;
+  const book = examBook(x), ch = x.chapters.find(c => chapterMastery(book, c).pct < 100) || x.chapters[0];
+  R.book = book; R.ch = ch; store.set('vbv:reader', R); go('read');
+});
+function examTag(book, ch){
+  const x = upcomingExams().find(x => examBook(x) === book && (x.chapters || []).includes(ch));
+  if (!x) return ''; const d = daysTo(x.date);
+  return `<span class="examtag">📅 ${esc(x.name || 'Exam')} ${d === 0 ? 'today' : d === 1 ? 'tomorrow' : `in ${d} days`} · ${examReady(x)}% ready</span>`;
+}
+
+/* ---------- Picture clues (emoji from key words) ---------- */
+const EMO = {"god":"👑","lord":"👑","almighty":"👑","king":"🤴","kings":"🤴","queen":"👸","throne":"🪑","reign":"👑","rule":"👑","crown":"👑","crowns":"👑","jesus":"✝️","christ":"✝️","cross":"✝️","lamb":"🐑","sheep":"🐑","shepherd":"🧑‍🌾","spirit":"🕊️","dove":"🕊️","holy":"✨","heaven":"☁️","heavens":"☁️","cloud":"☁️","clouds":"☁️","sky":"🌤️","angel":"😇","angels":"😇","elder":"👴","elders":"👴","creature":"🦁","creatures":"🦁","lion":"🦁","ox":"🐂","eagle":"🦅","bird":"🐦","birds":"🐦","horse":"🐎","horses":"🐎","rider":"🏇","beast":"🐉","dragon":"🐉","serpent":"🐍","snake":"🐍","locust":"🦗","locusts":"🦗","scorpion":"🦂","frog":"🐸","frogs":"🐸","wolf":"🐺","dog":"🐕","dogs":"🐕","fish":"🐟","white":"⚪","red":"🔴","black":"⚫","green":"🟢","pale":"🌫️","purple":"🟣","scarlet":"🔴","gold":"🪙","golden":"🪙","silver":"🥈","bronze":"🥉","iron":"⚙️","jewel":"💎","jewels":"💎","jasper":"💎","sapphire":"💎","emerald":"💎","pearl":"⚪","pearls":"⚪","crystal":"💎","glass":"🪟","precious":"💎","stone":"🪨","stones":"🪨","rock":"🪨","fire":"🔥","flame":"🔥","flames":"🔥","blazing":"🔥","burn":"🔥","burning":"🔥","smoke":"💨","sulfur":"🌋","lightning":"⚡","thunder":"⛈️","thunders":"⛈️","hail":"🧊","earthquake":"🫨","storm":"⛈️","wind":"🌬️","winds":"🌬️","sun":"☀️","moon":"🌙","star":"⭐","stars":"⭐","light":"💡","lamp":"🪔","lampstand":"🕯️","lampstands":"🕯️","darkness":"🌑","dark":"🌑","night":"🌙","morning":"🌅","sea":"🌊","water":"💧","waters":"💧","river":"🏞️","rivers":"🏞️","spring":"⛲","springs":"⛲","lake":"🏞️","rain":"🌧️","earth":"🌍","world":"🌍","nations":"🌍","nation":"🌍","land":"🏜️","desert":"🏜️","wilderness":"🏜️","mountain":"⛰️","mountains":"⛰️","island":"🏝️","islands":"🏝️","tree":"🌳","trees":"🌳","leaves":"🍃","fruit":"🍎","grass":"🌱","harvest":"🌾","grain":"🌾","wheat":"🌾","sickle":"🌙","vine":"🍇","grapes":"🍇","winepress":"🍇","wine":"🍷","cup":"🍷","bread":"🍞","oil":"🫒","honey":"🍯","manna":"🍞","supper":"🍽️","feast":"🍽️","eat":"🍽️","ate":"🍽️","flesh":"🍖","drink":"🥤","hunger":"🍽️","thirst":"💧","thirsty":"💧","sword":"🗡️","swords":"🗡️","war":"⚔️","battle":"⚔️","armies":"🪖","army":"🪖","soldiers":"🪖","generals":"🎖️","captured":"⛓️","chain":"⛓️","chains":"⛓️","prison":"⛓️","slave":"⛓️","slaves":"⛓️","free":"🕊️","bow":"🏹","shield":"🛡️","rod":"🦯","sceptre":"🦯","scepter":"🦯","staff":"🦯","measure":"📏","measured":"📏","measuring":"📏","blood":"🩸","dead":"💀","death":"💀","die":"💀","died":"💀","killed":"💀","slain":"💀","kill":"💀","grave":"⚰️","hades":"⚰️","life":"🌱","alive":"🌱","tears":"😢","tear":"😢","weep":"😢","mourning":"😢","crying":"😢","pain":"🤕","plague":"🦠","plagues":"🦠","sores":"🦠","heal":"🩹","healing":"🩹","eye":"👁️","eyes":"👀","mouth":"👄","tongue":"👅","head":"🗣️","heads":"🗣️","face":"🙂","hair":"💇","hand":"✋","hands":"✋","feet":"🦶","foot":"🦶","knees":"🧎","heart":"❤️","hearts":"❤️","forehead":"🤔","foreheads":"🤔","thigh":"🦵","wings":"🪽","horn":"📯","horns":"📯","teeth":"🦷","voice":"🗣️","voices":"🗣️","shout":"📢","shouting":"📢","shouted":"📢","cried":"📢","loud":"📢","roar":"📢","word":"💬","words":"💬","sing":"🎶","sang":"🎶","song":"🎶","songs":"🎶","music":"🎶","harp":"🪕","harps":"🪕","trumpet":"🎺","trumpets":"🎺","praise":"🙌","hallelujah":"🙌","worship":"🛐","worshipped":"🛐","worshiped":"🛐","bowed":"🛐","pray":"🙏","prayers":"🙏","prayer":"🙏","amen":"🙏","blessed":"🙏","blessing":"🙏","thanks":"🙏","glory":"✨","glorious":"✨","splendour":"✨","splendor":"✨","power":"⚡","powerful":"⚡","strength":"💪","mighty":"💪","salvation":"🛟","saved":"🛟","holiness":"✨","honour":"🏅","honor":"🏅","judge":"⚖️","judged":"⚖️","judgment":"⚖️","judgments":"⚖️","justice":"⚖️","truth":"✅","faithful":"🤝","righteous":"✅","righteousness":"✅","wrath":"😠","fury":"😠","anger":"😠","angry":"😠","punish":"⚖️","sin":"❌","sins":"❌","evil":"😈","devil":"😈","satan":"😈","demons":"👹","demon":"👹","false":"🎭","lie":"🤥","lies":"🤥","liar":"🤥","liars":"🤥","prostitute":"💄","adultery":"💔","immorality":"💔","idols":"🗿","idol":"🗿","image":"🗿","magic":"🪄","sorcery":"🪄","mark":"®️","repent":"↩️","repented":"↩️","prophet":"📜","prophets":"📜","prophecy":"📜","scroll":"📜","scrolls":"📜","book":"📖","books":"📖","write":"✍️","written":"✍️","wrote":"✍️","name":"🏷️","names":"🏷️","seal":"🔏","seals":"🔏","sealed":"🔏","testimony":"🗣️","witness":"🧑‍⚖️","witnesses":"🧑‍⚖️","message":"✉️","letter":"✉️","invited":"✉️","robe":"👘","robes":"👘","linen":"👕","clothed":"👕","dressed":"👕","garment":"👕","garments":"👕","clothes":"👕","sash":"🎗️","bride":"👰","wedding":"💒","bridegroom":"🤵","husband":"🤵","wife":"👰","woman":"👩","women":"👩","man":"👨","men":"👨","child":"👶","son":"👦","sons":"👦","servant":"🧑‍🔧","servants":"🧑‍🔧","brothers":"👬","sisters":"👭","people":"👥","peoples":"👥","multitude":"👥","crowd":"👥","saints":"😇","tribe":"👥","tribes":"👥","merchants":"🧑‍💼","sailors":"⛵","ship":"🚢","ships":"🚢","city":"🏙️","cities":"🏙️","jerusalem":"🏙️","babylon":"🏚️","temple":"🛕","altar":"⛩️","wall":"🧱","walls":"🧱","gate":"🚪","gates":"🚪","door":"🚪","open":"🔓","opened":"🔓","shut":"🔒","key":"🔑","keys":"🔑","street":"🛣️","house":"🏠","home":"🏠","foundation":"🧱","foundations":"🧱","tent":"⛺","dwelling":"⛺","beginning":"🌅","alpha":"🅰️","omega":"Ω","seven":"7️⃣","ten":"🔟","twelve":"🕛","thousand":"💯","thousands":"💯","hour":"⏰","years":"⏳","year":"⏳","forever":"♾️","eternal":"♾️","soon":"⏱️","quickly":"⏱️","rich":"💰","riches":"💰","wealth":"💰","money":"💰","poor":"🪙","buy":"🛒","sell":"🛒","trade":"🛒","cargo":"📦","incense":"🪔","perfume":"🌸","spices":"🌶️","bowl":"🥣","bowls":"🥣","pour":"🫗","poured":"🫗","fear":"😨","afraid":"😨","joy":"😊","rejoice":"😊","glad":"😊","love":"❤️","loved":"❤️","peace":"☮️","grace":"🎁","gift":"🎁","reward":"🏆","victory":"🏆","victorious":"🏆","overcome":"🏆","conquer":"🏆","triumph":"🏆","sleep":"😴","dream":"💭","wisdom":"🦉","wise":"🦉","knowledge":"🧠","mind":"🧠","secret":"🤫","mystery":"❓","hidden":"🫣","sign":"🪧","signs":"🪧","wonders":"🌟","miracles":"🌟","vision":"👁️"};
+function clueFor(text){
+  const out = [];
+  for (const w of words(text)){
+    const k = norm(w); if (!k) continue;
+    const e = EMO[k] || (k.endsWith('s') && EMO[k.slice(0, -1)]) || (k.endsWith('es') && EMO[k.slice(0, -2)]) || (k.endsWith('ed') && (EMO[k.slice(0, -2)] || EMO[k.slice(0, -1)])) || (k.endsWith('ing') && (EMO[k.slice(0, -3)] || EMO[k.slice(0, -3) + 'e']));
+    if (e && !out.includes(e)) out.push(e);
+    if (out.length >= 6) break;
+  }
+  return out.length ? out.join(' ') : '📖';
+}
+
+/* ---------- Listen + Pictures screens ---------- */
+let MODE = { kind: 'listen', i: 0 };
+function chapterRows(){
+  const vs = chapterNIV(R.book, R.ch); if (!vs) return [];
+  const list = Array.isArray(vs) ? vs : Object.keys(vs).reduce((a, n) => (a[n-1] = vs[n], a), []);
+  return list.map((t, i) => t ? { n: i + 1, t } : null).filter(Boolean);
+}
+const RP = () => store.get(`vbv:prog:NIV:${R.book}:${R.ch}`, {});
+function saveRP(n, patch){ const all = RP(); all[n] = Object.assign(all[n] || {}, patch); store.set(`vbv:prog:NIV:${R.book}:${R.ch}`, all); if (S.book === R.book && S.ch === R.ch) PROG = all; }
+function openMode(kind, startN){ const rows = chapterRows(); if (!rows.length) return; MODE = { kind, i: Math.max(0, rows.findIndex(r => r.n === startN)), tab: startN ? 'test' : 'learn' }; go('mode'); }
+function stopSpeech(){ try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch(e){} }
+function coachLine(t){ const ci = (R.ch - 1) % MASCOTS.length; return `<div class="tipbubble"><img src="${MASCOTS[ci] ? MASCOTS[ci].src : ''}" alt="" aria-hidden="true">${t}</div>`; }
+function renderMode(){
+  stopSpeech();
+  $('#x-back').textContent = `‹ ${R.book} ${R.ch}`;
+  if (MODE.kind === 'listen') renderListen(); else renderPictures();
+}
+$('#x-back').onclick = () => { stopSpeech(); go('read'); };
+
+function pickVoice(){
+  const vs = speechSynthesis.getVoices();
+  return vs.find(v => /en-GB/i.test(v.lang) && /natural|premium|enhanced|daniel|kate|serena/i.test(v.name)) || vs.find(v => /en-GB/i.test(v.lang)) || vs.find(v => /^en/i.test(v.lang)) || null;
+}
+function renderListen(){
+  const rows = chapterRows(), el = $('#x-body'); if (MODE.i >= rows.length) MODE.i = 0;
+  const r = rows[MODE.i], p = RP()[r.n] || {}, can = 'speechSynthesis' in window;
+  const hide = store.get('vbv:lhide', false), rate = store.get('vbv:lrate', 1);
+  $('#x-count').textContent = `Verse ${r.n} of ${rows.length}`;
+  el.innerHTML = `<div class="cardhead"><div class="vlabel"><span class="ref">${R.ch}:${r.n}</span><small>🎧 Listen</small></div></div>
+    ${coachLine(can ? 'Listen, then say it back. Rate yourself honestly!' : "Your phone can't read aloud here. Read it, say it back, then rate yourself.")}
+    <div class="row"><label class="check"><input type="checkbox" id="ls-hide" ${hide ? 'checked' : ''}> Hide the words</label><span class="spacer"></span>
+      <select class="lvl" id="ls-rate" aria-label="Reading speed"><option value="0.8">Slow</option><option value="1">Normal</option><option value="1.2">Fast</option></select></div>
+    <p class="verse"><span class="sec ${hide ? 'hidden' : ''}" id="ls-text"><span class="vn">${r.n}</span>${esc(r.t)}</span></p>
+    <div class="row"><button class="btn quiet" id="ls-prev" ${MODE.i ? '' : 'disabled'}>‹ Prev</button><span class="spacer"></span>
+      ${can ? '<button class="btn primary" id="ls-play">▶ Play</button>' : ''}<span class="spacer"></span><button class="btn quiet" id="ls-next" ${MODE.i < rows.length - 1 ? '' : 'disabled'}>Next ›</button></div>
+    <div id="ls-ask" ${can ? 'hidden' : ''}><p class="hint" style="margin-bottom:8px">How well could you say it?${p.lis != null ? ` Last time: ${p.lis === 100 ? 'Knew it' : p.lis === 60 ? 'Nearly' : 'Not yet'}.` : ''}</p>
+      <div class="rate"><button class="btn go" data-r="100">😀 Knew it</button><button class="btn" data-r="60">🙂 Nearly</button><button class="btn" data-r="20">😕 Not yet</button></div></div>
+    <nav class="trail">${rows.map((x, i) => { const q = RP()[x.n] || {}; return `<button class="dot ${q.lis >= 100 ? 'done' : ''} ${i === MODE.i ? 'current' : ''}" data-li="${i}" aria-label="Verse ${x.n}">${x.n}</button>`; }).join('')}</nav>`;
+  $('#ls-rate').value = String(rate);
+  $('#ls-rate').onchange = e => store.set('vbv:lrate', +e.target.value);
+  $('#ls-hide').onchange = e => { store.set('vbv:lhide', e.target.checked); $('#ls-text').classList.toggle('hidden', e.target.checked); };
+  const goTo = i => { MODE.i = i; renderListen(); };
+  $('#ls-prev').onclick = () => goTo(MODE.i - 1);
+  $('#ls-next').onclick = () => goTo(MODE.i + 1);
+  el.querySelector('.trail').onclick = e => { const d = e.target.closest('[data-li]'); if (d) goTo(+d.dataset.li); };
+  const play = () => {
+    stopSpeech();
+    const u = new SpeechSynthesisUtterance(r.t), v = pickVoice(); if (v) u.voice = v; u.lang = v ? v.lang : 'en-GB'; u.rate = +$('#ls-rate').value;
+    const b = $('#ls-play'); b.textContent = '■ Stop'; b.onclick = () => { stopSpeech(); b.textContent = '▶ Play again'; b.onclick = play; $('#ls-ask').hidden = false; };
+    u.onend = () => { if (!$('#ls-play')) return; b.textContent = '▶ Play again'; b.onclick = play; $('#ls-ask').hidden = false; };
+    speechSynthesis.speak(u);
+  };
+  if (can) $('#ls-play').onclick = play;
+  el.querySelector('.rate').onclick = e => {
+    const b = e.target.closest('[data-r]'); if (!b) return; const val = +b.dataset.r, pts = val === 100 ? 10 : val === 60 ? 5 : 2;
+    saveRP(r.n, { lis: val }); addPts(pts);
+    if (val === 100) burst(40);
+    if (MODE.i < rows.length - 1){ MODE.i++; renderListen(); if (can && MODE.auto !== false) setTimeout(() => $('#ls-play') && $('#ls-play').click(), 350); }
+    else { el.innerHTML = `<div class="stage-title">🎧 Chapter listened! +${pts} pts</div>${coachLine('Great listening. Go back and memorise the ones you rated "Not yet".')}<div class="row end"><button class="btn quiet" id="ls-again">Start again</button><button class="btn go" id="ls-done">Back to ${R.book} ${R.ch}</button></div>`; burst(90);
+      $('#ls-again').onclick = () => { MODE.i = 0; renderListen(); }; $('#ls-done').onclick = () => go('read'); }
+  };
+}
+
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const shortTxt = t => { const w = words(t); return w.slice(0, 6).join(' ') + (w.length > 6 ? '…' : ''); };
+function renderPictures(){
+  const rows = chapterRows().map(r => ({ ...r, c: clueFor(r.t) })), el = $('#x-body');
+  $('#x-count').textContent = `${rows.length} verses`;
+  const tabs = `<div class="seg" role="tablist"><button aria-pressed="${MODE.tab === 'learn'}" data-tab="learn">Learn the cards</button><button aria-pressed="${MODE.tab === 'test'}" data-tab="test">Test ✓</button></div>`;
+  if (MODE.tab === 'learn'){
+    el.innerHTML = `<div class="cardhead"><div class="vlabel"><span class="ref">${R.ch}</span><small>🖼️ Picture clues</small></div>${tabs}</div>
+      ${coachLine('Each picture is made from the key words. Say the verse from the picture, then tap to check.')}
+      <div class="cards">${rows.map(r => `<button class="pcard" data-n="${r.n}"><span class="r">${R.ch}:${r.n}</span><span class="clue">${r.c}</span><span class="t" hidden>${esc(r.t)}</span></button>`).join('')}</div>
+      <div class="row end"><button class="btn go" data-tab="test">Test me →</button></div>`;
+    el.querySelector('.cards').onclick = e => { const c = e.target.closest('.pcard'); if (c){ const t = c.querySelector('.t'); t.hidden = !t.hidden; } };
+  } else {
+    const pool = rows.filter(r => r.c !== '📖');
+    if (pool.length < 3){ el.innerHTML = `${tabs}<p class="hint">Not enough picture clues in this chapter for a test yet.</p>`; }
+    else {
+      const start = MODE.i && rows[MODE.i] ? pool.filter(r => r.n === rows[MODE.i].n) : [];
+      const prog = RP();
+      const order = start.concat(shuffle(pool.filter(r => !start.includes(r))).sort((a, b) => ((prog[a.n] || {}).pic || 0) - ((prog[b.n] || {}).pic || 0)));
+      const T = { qs: order.slice(0, Math.min(8, pool.length)), k: 0, right: 0 };
+      const ask = () => {
+        if (T.k >= T.qs.length){
+          const pts = T.right * 10 + (T.right === T.qs.length ? 20 : 0); addPts(pts); burst(T.right === T.qs.length ? 120 : 60);
+          el.innerHTML = `<div class="cardhead"><div class="vlabel"><span class="ref">${T.right}/${T.qs.length}</span><small>🖼️ Picture test</small></div>${tabs}</div>
+            ${coachLine(T.right === T.qs.length ? `Perfect round! +${pts} pts` : `+${pts} pts. Look at the cards you missed, then go again.`)}
+            <div class="row end"><button class="btn quiet" id="pt-again">Test again</button><button class="btn go" id="pt-done">Back to ${R.book} ${R.ch}</button></div>`;
+          $('#pt-again').onclick = () => { MODE.i = 0; renderPictures(); }; $('#pt-done').onclick = () => go('read'); return;
+        }
+        const q = T.qs[T.k], others = shuffle(pool.filter(r => r.n !== q.n && r.c !== q.c)).slice(0, 2), opts = shuffle([q, ...others]), picToVerse = T.k % 2 === 1;
+        el.innerHTML = `<div class="cardhead"><div class="vlabel"><span class="ref">${T.k + 1}/${T.qs.length}</span><small>🖼️ Picture test</small></div>${tabs}</div>
+          ${picToVerse ? `<p class="hint">Which verse does this picture show?</p><div class="clue">${q.c}</div>` : `<p class="hint">Which picture matches ${R.ch}:${q.n}?</p><p class="verse" style="line-height:1.7">${esc(q.t)}</p>`}
+          <div class="opts">${opts.map(o => `<button class="opt ${picToVerse ? '' : 'clueopt'}" data-n="${o.n}">${picToVerse ? `<b style="color:var(--pink)">${R.ch}:${o.n}</b> ${esc(shortTxt(o.t))}` : o.c}</button>`).join('')}</div>
+          <div class="row end"><button class="btn go" id="pt-next" hidden>Next →</button></div>`;
+        let done = false;
+        el.querySelector('.opts').onclick = e => {
+          const b = e.target.closest('.opt'); if (!b || done) return; done = true;
+          const ok = +b.dataset.n === q.n; b.classList.add(ok ? 'right' : 'wrong');
+          if (!ok) el.querySelector(`.opt[data-n="${q.n}"]`).classList.add('right');
+          const prev = (RP()[q.n] || {}).pic || 0; saveRP(q.n, { pic: ok ? 100 : Math.max(0, prev - 50) });
+          if (ok){ T.right++; burst(25); }
+          const nx = $('#pt-next'); nx.hidden = false; nx.focus({ preventScroll: true }); nx.onclick = () => { T.k++; ask(); };
+        };
+        el.querySelector('.seg').onclick = tabClick;
+      };
+      ask(); return;
+    }
+  }
+  el.querySelectorAll('[data-tab]').forEach(b => b.onclick = tabClick);
+  function tabClick(e){ const b = e.target.closest('[data-tab]'); if (!b) return; MODE.tab = b.dataset.tab; MODE.i = 0; renderPictures(); window.scrollTo({ top: 0 }); }
+}
+if (window.speechSynthesis) speechSynthesis.getVoices();
+
 $('#r-back').onclick = () => go('home');
 $('#m-back').onclick = () => { R.book = S.book; R.ch = S.ch; store.set('vbv:reader', R); go('read'); };
 
